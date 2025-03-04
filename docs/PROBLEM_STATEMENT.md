@@ -89,7 +89,7 @@ The goal is to develop a heuristic algorithm compression that minimizes the numb
 - Your program must read a **CSV** file to get the input data. The file extension should be `.csv`.
 - Each row in the file should be unique.
 - Each row contains the same number of columns.
-- The content of a cell is not important, so it can contain a number, a character, or anything else.
+- The content of a cell is not important, so it can contain a number, a character, or a string. However, assume that it does not contain the `|` symbol.
 
 
 Examples of valid input file:
