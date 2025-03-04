@@ -1,16 +1,62 @@
 #include "validator.h"
 
-std::pair<bool, std::string> Validator::validate(const std::string &str1,
-                                                 const std::string &str2) {
-  if (str1.empty() || str2.empty()) {
-    return {false, "One or both strings are empty."};
+std::pair<bool, std::string>
+Validator::validate_output(const std::string &input,
+                           const std::string &output) {
+  if (input.empty()) {
+    return {false, "Input is empty."};
   }
-  if (str1.length() != str2.length()) {
-    return {false, "Strings are of different lengths."};
+
+  if (output.empty()) {
+    return {false, "Output is empty."};
   }
-  if (str1 != str2) {
-    return {false, "Strings do not match."};
+
+  std::vector in_rows = split(input, '\n');
+  std::vector out_rows = split(output, '\n');
+
+  std::map<std::string, int> row_counter;
+
+  // TODO: Ensure that input has no duplicate lines by calling validate_input??
+  for (std::string row : in_rows) {
+    if (row.size() > 0)
+      row_counter.insert({row, 1});
   }
+
+  for (std::string row : out_rows) {
+    std::deque<std::string> unmerged_rows = unmerge(row);
+    for (std::string urow : unmerged_rows) {
+
+      // Finding element with key
+      auto it = row_counter.find(urow);
+
+      if (it == row_counter.end()) {
+        // output contains extra row
+        return {false, "Output contains a row not found in input: " + urow +
+                           "\n"
+                           "Original row from output: " +
+                           row};
+      } else {
+        // row is present in input
+
+        // check if output produced duplicate rows
+        if (it->second == 0) {
+          return {false, "Duplicate row in output: "
+                         "Unmerging " +
+                             row + " produces " + urow +
+                             " which occurs more than once"};
+        } else {
+          row_counter[urow] = 0;
+        }
+      }
+    }
+  }
+
+  // check if all input rows have count 0
+  for (auto it = row_counter.begin(); it != row_counter.end(); ++it)
+    if (it->second == 1) {
+      return {false, "Missing row in output: " + it->first};
+    }
+
   return {true, "Validation successful."};
 }
 

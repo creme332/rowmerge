@@ -3,6 +3,7 @@
 
 #include <deque>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
 #include <utility> // for std::pair
@@ -15,8 +16,8 @@
  */
 class Validator {
 public:
-  std::pair<bool, std::string> validate(const std::string &str1,
-                                        const std::string &str2);
+  static std::pair<bool, std::string>
+  validate_output(const std::string &input, const std::string &output);
 
   /**
    * @brief Unmerges a row and returns the initial list of rows.
@@ -49,7 +50,7 @@ private:
    * substrings are stored in a `std::vector<std::string>` and returned.
    *
    * Reference: https://stackoverflow.com/a/46931770/17627866
-   * 
+   *
    * @param s The input string to be split.
    * @param delim The character used as the delimiter to split the string.
    * @return A vector containing the substrings after splitting the input
