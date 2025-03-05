@@ -4,4 +4,12 @@ project(rowmerge)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(rowmerge src/main.cpp src/validator.cpp)
+# Main executable
+add_executable(rowmerge src/main.cpp src/validator.cpp src/CSVHandler.cpp)
+
+enable_testing()
+
+add_library(test_main OBJECT tests/test_main.cpp)
+
+add_executable(test1 tests/test1.cpp $<TARGET_OBJECTS:test_main>)
+add_test(NAME test1 COMMAND test1)

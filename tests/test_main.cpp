@@ -4,7 +4,5 @@
 int main(int argc, char** argv) {
     doctest::Context context;
     context.applyCommandLine(argc, argv);
-    int res = context.run();
-    
-    return res;
-}
+    return context.run(); 
+} 
