@@ -1,6 +1,6 @@
 # Problem Statement
 
-You are given a file with $P$ rows and $K$ columns **where each row of the file is unique**.
+You are given a table with $P$ rows and $K$ columns **where each row is unique**.
 
 For example if $P=6$ and $K=5$, a possible input is:
 
@@ -13,11 +13,13 @@ For example if $P=6$ and $K=5$, a possible input is:
 1 2 3 4 5
 ```
 
-We want to compress the file based on the following rules:
+We want to compress the table based on the following rules:
 
 1. Merging is performed row-wise.
 3. You may merge multiple rows at once.
     
+   **Example 1:**
+
     ```
     1 1 3 2      
     1 1 1 2
@@ -26,6 +28,7 @@ We want to compress the file based on the following rules:
 
     becomes `1 1 1|2|3 2`.
 
+    **Example 2:**
 
     ```
     1 1 3 2       
@@ -48,9 +51,17 @@ We want to compress the file based on the following rules:
     2 4 5 5
     ```
 
-    becomes `1|2 3|4 5 5`.
+    becomes `1|2 3|4 5 5`. 
 
-5. Two or more rows can only be merged if they differ by only one column.
+    Another possible sub-optimal result after merging is:
+
+    ```
+    1 3|4 5 5
+    2 3|4 5 5
+    ```
+
+5. The merging operation should be reversible: We should be able to obtain the original input from the compressed result, ignoring order of rows.
+6. Two rows can be merged if they differ by exactly one column.
     
     An invalid merge is to convert 
     
@@ -62,8 +73,7 @@ We want to compress the file based on the following rules:
     to `1 1|3 1|2 2` because if we had to un-merge `1 1|3 1|2 2`, invalid rows such as `1 1 3 2` will be created.
 
 
-
-One way to compress the original input file is as follows:
+One way to compress the original input table is as follows:
 
 1. Merge the first and second rows to yield `1 2 4 4|6 2`.
 2. Merge rows 3-5 to yield `2 1|2|3 2 2 2`.
@@ -76,8 +86,39 @@ The final compressed result is:
 1 2 3 4 5
 ```
 
-The goal is to develop a heuristic algorithm compression that minimizes the number of rows.
+The goal is to develop a heuristic algorithm compression that minimizes the number of rows in the reasonable time.
 
+## Example of a sub-optimal grouping
+
+Input:
+
+```
+1 3 y
+1 3 x
+1 4 x
+2 3 x
+2 4 x
+```
+
+One way to merge the rows:
+
+1. Merge rows 1 and 2 to get `1 3 x|y`.
+2. Merge rows 4 and 5 to get `2 3|4 x`.
+
+The final result becomes
+
+```
+1 3 x|y
+1 4 x
+2 3|4 x
+```
+
+A better way to compress the input is to merge rows 2-5 to get `1|2 3|4 x`. The best result is:
+
+```
+1 3 y
+1|2 3|4 x
+```
 
 ## Constraints
 
