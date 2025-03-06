@@ -16,6 +16,15 @@
  */
 class Validator {
 public:
+  /**
+   * @brief Checks whether `output` is a valid result after `input` has been
+   * compressed. It works by unmerging each row of `output` and comparing it
+   * with `input`.
+   *
+   * @param input Initial CSV file
+   * @param output Final CSV file after compression
+   * @return std::pair<bool, std::string>
+   */
   static std::pair<bool, std::string>
   validate_output(const std::string &input, const std::string &output);
 
