@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Main executable
-add_executable(rowmerge src/main.cpp src/validator.cpp src/CSVHandler.cpp)
+add_executable(rowmerge src/main.cpp src/validator.cpp src/CSVHandler.cpp src/algorithms/sample_algo.cpp)
 
 enable_testing()
 include(CTest)
