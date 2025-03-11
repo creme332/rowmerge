@@ -79,9 +79,49 @@ TEST_CASE("Testing unmerge()") {
     CHECK(check_deque(result, expected));
   }
 
-  SUBCASE("Normal case") {
+  SUBCASE("Normal case with a single pipe") {
     deque<string> result = Validator::unmerge("2,1|2|3,2,2,2");
     deque<string> expected = {"2,2,2,2,2", "2,1,2,2,2", "2,3,2,2,2"};
     CHECK(check_deque(expected, result));
+  }
+
+  SUBCASE("Normal case with 2 pipes") {
+    deque<string> result = Validator::unmerge("1|2,3|4,5");
+    deque<string> expected = {"1,3,5", "1,4,5", "2,3,5", "2,4,5"};
+    CHECK(check_deque(expected, result));
+  }
+}
+
+TEST_CASE("Testing validate_output()") {
+  using namespace std;
+
+  SUBCASE("Empty input and output") {
+    string input = "";
+    string output = "";
+    std::pair<bool, std::string> result =
+        Validator::validate_output(input, output);
+    CHECK_FALSE(result.first);
+  }
+
+  SUBCASE("Valid input and valid output") {
+    string input = "1,1,3,2\n"
+                   "1,1,1,2\n"
+                   "1,1,2,2";
+    string output = "1,1,1|3,2\n"
+                    "1,1,2,2";
+    std::pair<bool, std::string> result =
+        Validator::validate_output(input, output);
+    CHECK(result.first);
+  }
+
+  SUBCASE("Valid input and invalid output") {
+    string input = "1,1,1,2\n"
+                   "1,3,2,2\n";
+    string output = "1,1|3,1|2,2\n";
+    std::pair<bool, std::string> result =
+        Validator::validate_output(input, output);
+    CHECK_FALSE(result.first);
+    CHECK_EQ(result.second, "Output contains a row not found in input: "
+                            "1,3,1,2\nOriginal row from output: 1,1|3,1|2,2");
   }
 }
