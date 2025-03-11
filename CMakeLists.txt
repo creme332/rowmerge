@@ -13,4 +13,4 @@ include(CTest)
 add_library(test_main OBJECT tests/test_main.cpp)
 
 add_executable(test1 tests/test1.cpp src/validator.cpp $<TARGET_OBJECTS:test_main>)
-add_test(NAME test1 COMMAND test1)
+add_test(NAME Validator_Test COMMAND test1)
