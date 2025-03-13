@@ -1,6 +1,6 @@
 #include "CSVHandler.h"
 
-std::string CSVHandler::readCSV(const std::string &filename) {
+std::string CSVHandler::readCSVAsString(const std::string &filename) {
   auto validation = isValidCSV(filename);
   if (!validation.first) {
     std::cerr << "Error: " << validation.second << std::endl;
@@ -8,7 +8,7 @@ std::string CSVHandler::readCSV(const std::string &filename) {
   }
 
   std::ifstream file(filename);
-  if (!file) {
+  if (!file || !file.is_open()) {
     std::cerr << "Error: Unable to open file " << filename << std::endl;
     return "";
   }
@@ -29,6 +29,47 @@ bool CSVHandler::writeToFile(const std::string &filename,
 
   file << content;
   return true;
+}
+
+/**
+ * @brief Reads a CSV file and parses its contents into a vector of rows,
+ *        where each row is represented as a vector of strings (columns).
+ *
+ * @param filename The path to the CSV file.
+ * @return A vector of rows, where each row is a vector of strings representing
+ * the columns.
+ * @throws std::runtime_error If the file cannot be opened.
+ *
+ * @note This function assumes that the CSV file uses commas (`,`) as the
+ * delimiter. It does not handle quoted values or escape characters.
+ */
+static std::vector<std::vector<std::string>>
+readCSVAsVector(const std::string &filename) {
+  std::vector<std::vector<std::string>> data;
+  std::ifstream file(filename);
+
+  // Check if the file opened successfully
+  if (!file || !file.is_open()) {
+    throw std::runtime_error("Could not open file: " + filename);
+  }
+
+  std::string line;
+  // Read the file line by line
+  while (std::getline(file, line)) {
+    std::vector<std::string> row;
+    std::stringstream ss(line);
+    std::string cell;
+
+    // Split the line by commas and store in row vector
+    while (std::getline(ss, cell, ',')) {
+      row.push_back(cell);
+    }
+
+    // Add the parsed row to the data vector
+    data.push_back(row);
+  }
+
+  return data;
 }
 
 std::pair<bool, std::string>

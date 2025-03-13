@@ -4,7 +4,7 @@
 #include <iostream>
 
 int main() {
-  const std::string input_filename = "data.csv";
+  const std::string input_filename = "input.csv";
   const std::string output_filename = "output.csv";
 
   // Validating CSV
@@ -17,7 +17,7 @@ int main() {
   }
 
   // Reading from CSV
-  std::string csvContent = CSVHandler::readCSV(input_filename);
+  std::string csvContent = CSVHandler::readCSVAsString(input_filename);
 
   // Compress CSV
   SampleAlgorithm algo;

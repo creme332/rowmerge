@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <sys/stat.h> // For checking file existence and size
 #include <utility>    // For std::pair
 
@@ -22,7 +23,16 @@ public:
    * @return std::string The content of the CSV file. Returns an empty string if
    * an error occurs.
    */
-  static std::string readCSV(const std::string &filename);
+  static std::string readCSVAsString(const std::string &filename);
+
+    /**
+   * @brief Reads the entire content of a CSV file and returns it as a string.
+   *
+   * @param filename The name of the CSV file to read.
+   * @return std::string The content of the CSV file. Returns an empty string if
+   * an error occurs.
+   */
+  static std::vector<std::string> readCSVAsVector(const std::string &filename);
 
   /**
    * @brief Writes a string content to a specified file.
