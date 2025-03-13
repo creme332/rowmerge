@@ -6,6 +6,8 @@
 class SampleAlgorithm : public AlgorithmBase {
 public:
   std::string solve(const std::string &input) override;
+  std::string
+  solve(const std::vector<std::vector<std::string>> &input);
 };
 
 #endif

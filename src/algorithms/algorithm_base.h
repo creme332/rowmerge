@@ -8,6 +8,8 @@ class AlgorithmBase {
 public:
   virtual ~AlgorithmBase() = default;
   virtual std::string solve(const std::string &input) = 0;
+  virtual std::string
+  solve(const std::vector<std::vector<std::string>> &input) = 0;
 };
 
 #endif
