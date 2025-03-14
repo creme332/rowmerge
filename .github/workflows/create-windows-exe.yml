@@ -24,7 +24,7 @@ jobs:
         cmake --build . --config Release
 
     - name: Upload executable
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: rowmerge.exe
         path: build/Release/rowmerge.exe 
