@@ -1,0 +1,30 @@
+name: Build and Download .exe
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure and build
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build . --config Release
+
+    - name: Upload executable
+      uses: actions/upload-artifact@v3
+      with:
+        name: rowmerge.exe
+        path: build/Release/rowmerge.exe 
