@@ -43,8 +43,8 @@ bool CSVHandler::writeToFile(const std::string &filename,
  * @note This function assumes that the CSV file uses commas (`,`) as the
  * delimiter. It does not handle quoted values or escape characters.
  */
-static std::vector<std::vector<std::string>>
-readCSVAsVector(const std::string &filename) {
+std::vector<std::vector<std::string>>
+CSVHandler::readCSVAsVector(const std::string &filename) {
   std::vector<std::vector<std::string>> data;
   std::ifstream file(filename);
 
@@ -76,18 +76,18 @@ std::pair<bool, std::string>
 CSVHandler::isValidCSV(const std::string &filename) {
   // Check file extension
   if (filename.substr(filename.find_last_of(".") + 1) != "csv") {
-    return {false, "File does not have a .csv extension."};
+    return {false, "File " + filename + " does not have a .csv extension."};
   }
 
   // Check if file exists and is not empty
   struct stat fileInfo;
   if (stat(filename.c_str(), &fileInfo) != 0) {
-    return {false, "File does not exist."};
+    return {false, "File " + filename + " does not exist."};
   }
 
   if (fileInfo.st_size == 0) {
-    return {false, "File is empty."};
+    return {false, filename + " is empty."};
   }
 
-  return {true, "File is valid."};
+  return {true, filename + " is valid."};
 }
