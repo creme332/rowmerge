@@ -2,14 +2,41 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "default",
-      "description": "Default settings for the rowmerge project",
-      "hidden": false,
+      "name": "ninja",
+      "description": "Use Ninja for fast builds (cross-platform)",
+      "generator": "Ninja",
+      "binaryDir": "${workspaceFolder}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
+      }
+    },
+    {
+      "name": "vs2022",
+      "description": "Use Visual Studio 2022 on Windows",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${workspaceFolder}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "unix-makefiles",
+      "description": "Use Unix Makefiles (for Linux/macOS)",
       "generator": "Unix Makefiles",
       "binaryDir": "${workspaceFolder}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
+      }
+    },
+    {
+      "name": "mingw",
+      "description": "Use MinGW Makefiles on Windows",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${workspaceFolder}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
       }
     }
   ]
