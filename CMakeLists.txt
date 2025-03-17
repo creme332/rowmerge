@@ -4,8 +4,15 @@ project(rowmerge)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+file(GLOB ALGO_SOURCES src/algorithms/*.cpp)
+
 # Main executable
-add_executable(rowmerge src/main.cpp src/validator.cpp src/CSVHandler.cpp src/algorithms/sample_algo.cpp)
+add_executable(rowmerge 
+    src/main.cpp 
+    src/validator.cpp 
+    src/CSVHandler.cpp 
+    ${ALGO_SOURCES}
+)
 
 enable_testing()
 include(CTest)
