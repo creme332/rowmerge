@@ -1,5 +1,5 @@
 #include "CSVHandler.h"
-#include "algorithms/sample_algo.h"
+#include "algorithms/trivial_algo.h"
 #include "validator.h"
 #include <iostream>
 
@@ -27,7 +27,7 @@ void mainWorkflow() {
   std::string csvContent = CSVHandler::readCSVAsString(input_filename);
 
   // Compress CSV
-  SampleAlgorithm algo;
+  TrivialAlgorithm algo;
   std::string output = algo.solve(csvContent);
   std::cout << output << std::endl;
 
@@ -82,7 +82,7 @@ void clusterExerciseWorkflow() {
       CSVHandler::readCSVAsVector(input_filename);
 
   // Perform clustering
-  std::string output = SampleAlgorithm::clusterByColumns(
+  std::string output = TrivialAlgorithm::clusterByColumns(
       csvContentAsVector, columnCount, forwardPass);
 
   // Writing to CSV

@@ -1,4 +1,4 @@
-#ifndef SAMPLE_ALGO_H
+#ifndef SAMPLE_ALGO_H // TODO: change the name of the guards
 #define SAMPLE_ALGO_H
 
 #include "algorithm_base.h"
@@ -6,24 +6,16 @@
 #include <optional>
 #include <stdexcept>
 
+/**
+ * @brief A template for creating algorithms.
+ * TODO: Change the class name.
+ *
+ */
 class SampleAlgorithm : public AlgorithmBase {
 public:
   std::string solve(const std::string &input) override;
 
   std::string solve(std::vector<std::vector<std::string>> &input) override;
-
-  /**
-   * @brief
-   *
-   * @param input Vector representation of CSV file
-   * @param columnCount Number of columns to be processed
-   * @param forwardPass If set to true, columns will be traversed from left to
-   * right. Otherwise, columns will be traversed from right to left.
-   * @return std::string CSV format of compressed output
-   */
-  static std::string
-  clusterByColumns(std::vector<std::vector<std::string>> input, int columnCount,
-                   bool forwardPass);
 };
 
 #endif
