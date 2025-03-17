@@ -4,12 +4,29 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+/**
+ * @brief Base class for a CSV solver.
+ *
+ */
 class AlgorithmBase {
 public:
   virtual ~AlgorithmBase() = default;
 
+  /**
+   * @brief Compresses CSV
+   *
+   * @param input CSV file in string format
+   * @return std::string
+   */
   virtual std::string solve(const std::string &input) = 0;
 
+  /**
+   * @brief Compresses CSV
+   *
+   * @param input CSV file as a 2D vector
+   * @return std::string
+   */
   virtual std::string solve(std::vector<std::vector<std::string>> &input) = 0;
 
   /**
