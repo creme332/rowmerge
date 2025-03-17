@@ -21,6 +21,15 @@
       }
     },
     {
+      "name": "vs2019",
+      "description": "Use Visual Studio 2019 on Windows",
+      "generator": "Visual Studio 16 2019",
+      "binaryDir": "${workspaceFolder}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
       "name": "unix-makefiles",
       "description": "Use Unix Makefiles (for Linux/macOS)",
       "generator": "Unix Makefiles",
