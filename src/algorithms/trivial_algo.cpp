@@ -7,8 +7,7 @@ std::string TrivialAlgorithm::solve(const std::string &input) {
 
 std::string
 TrivialAlgorithm::solve(std::vector<std::vector<std::string>> &input) {
-  throw std::runtime_error("Implementation missing");
-  return "";
+  return clusterByColumns(input, input[0].size(), true);
 }
 
 std::string
