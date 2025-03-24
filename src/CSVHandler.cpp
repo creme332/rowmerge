@@ -1,4 +1,8 @@
 #include "CSVHandler.h"
+#include <unordered_set>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
 
 std::string CSVHandler::readCSVAsString(const std::string &filename) {
   auto validation = isValidCSV(filename);
@@ -72,22 +76,68 @@ CSVHandler::readCSVAsVector(const std::string &filename) {
   return data;
 }
 
-std::pair<bool, std::string>
-CSVHandler::isValidCSV(const std::string &filename) {
+std::pair<bool, std::string> CSVHandler::isValidCSV(const std::string &filename) {
   // Check file extension
   if (filename.substr(filename.find_last_of(".") + 1) != "csv") {
-    return {false, "File " + filename + " does not have a .csv extension."};
+      return {false, "File " + filename + " does not have a .csv extension."};
   }
 
   // Check if file exists and is not empty
   struct stat fileInfo;
   if (stat(filename.c_str(), &fileInfo) != 0) {
-    return {false, "File " + filename + " does not exist."};
+      return {false, "File " + filename + " does not exist."};
   }
 
   if (fileInfo.st_size == 0) {
-    return {false, filename + " is empty."};
+      return {false, filename + " is empty."};
   }
 
+  // Open the file
+  std::ifstream file(filename);
+  if (!file) {
+      return {false, "Error: Unable to open file " + filename};
+  }
+
+  std::unordered_set<std::string> lines;
+  std::string line;
+  size_t expectedColumnCount = 0;
+  bool firstLineFlag = true;
+
+  // Read the file line by line
+  while (std::getline(file, line)) {
+      // Check for duplicate lines
+      if (lines.find(line) != lines.end()) {
+          return {false, "Duplicate line found: " + line};
+      }
+      lines.insert(line);
+
+      // Column consistency check
+      std::stringstream lineStream(line);
+      size_t columnCount = 0;
+      std::string cell;
+
+      while (std::getline(lineStream, cell, ',')) {
+          columnCount++;
+      }
+
+      // For the first line, set the expected column count
+      if (firstLineFlag) {
+          expectedColumnCount = columnCount;
+          firstLineFlag = false;
+      } else {
+          // Check if the current line matches the expected column count
+          if (columnCount != expectedColumnCount) {
+              return {false, "Line has " + std::to_string(columnCount) + " columns, but expected " + std::to_string(expectedColumnCount) + " columns."};
+          }
+      }
+  }
+
+  // If no issues are found, return success
   return {true, filename + " is valid."};
 }
+
+
+ 
+
+
+  
