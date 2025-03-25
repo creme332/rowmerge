@@ -2,6 +2,11 @@
 #include <iostream>
 #include <utility> // for std::pair
 
+std::string OptimizedAlgorithm::solve(const std::string &input) {
+    throw std::runtime_error("Implementation missing");
+    return "";
+  }
+
 std::string
 OptimizedAlgorithm::solve(std::vector<std::vector<std::string>> &input) {
   // Step 1: Preprocessing and grouping
