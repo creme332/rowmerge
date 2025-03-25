@@ -62,7 +62,7 @@ void NewAlgorithm::mergeRows(std::vector<std::string>& row1,
                                 const std::vector<std::string>& row2, 
                                 int mergeColumn) {
   row1[mergeColumn] += "|" + row2[mergeColumn]; // Merge the differing column
-}
+} 
 
 
 
