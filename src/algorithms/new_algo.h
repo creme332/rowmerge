@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <optional>
 #include <stdexcept>
-
+ 
 /**
  * @brief A template for creating algorithms.
  * TODO: Change the class name.
