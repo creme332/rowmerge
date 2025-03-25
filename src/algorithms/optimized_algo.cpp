@@ -1,7 +1,7 @@
 #include "optimized_algo.h"
 #include <iostream>
 #include <utility> // for std::pair
-
+ 
 std::string OptimizedAlgorithm::solve(std::vector<std::vector<std::string>>& input) {
     // Step 1: Preprocessing and grouping
     std::unordered_map<std::string, std::vector<int>> groups; // Key: omitted row, Value: indices of rows
