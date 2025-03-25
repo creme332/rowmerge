@@ -7,20 +7,45 @@ std::string TrivialAlgorithm::solve(const std::string &input) {
 
 std::string
 TrivialAlgorithm::solve(std::vector<std::vector<std::string>> &input) {
-  return clusterByColumns(input, input[0].size(), true);
+  throw std::runtime_error("Implementation missing");
+  return "";
 }
 
 std::string
 TrivialAlgorithm::clusterByColumns(std::vector<std::vector<std::string>> input,
-                                   int columnCount, bool forwardPass) {
-  // initialize index of column where clustering will start. For forward pass
-  // start at 0 and for backward pass start at last column index
-  const int lastColumnIndex = input[0].size() - 1;
-  const int firstColumnMergeIndex = (forwardPass ? 0 : lastColumnIndex);
+                                   const int startColumn, int columnCount,
+                                   bool forwardPass) {
+  // determine the number of columns in each row
+  const int totalColumns = input[0].size();
 
-  for (int currentMergeColumn = firstColumnMergeIndex;
-       (forwardPass ? currentMergeColumn <= lastColumnIndex
-                    : currentMergeColumn >= 0);
+  // validate startColumn
+  if (startColumn < 0 || startColumn >= totalColumns) {
+    throw std::out_of_range(
+        "Error: startColumn is out of valid range. Valid range = 0 - " +
+        std::to_string(totalColumns - 1));
+  }
+
+  // validate columnCount
+  if (columnCount < 1) {
+    throw std::invalid_argument("Error: columnCount must be positive.");
+  }
+
+  // calculate index of last column if forward pass is used. Ensure value is not
+  // out of bounds.
+  const int lastColumnForwardPass =
+      std::min(startColumn + columnCount - 1, totalColumns - 1);
+
+  // calculate index of last column if backward pass is used. Ensure value is
+  // not out of bounds.
+  const int lastColumnBackwardPass = std::max(startColumn - columnCount + 1, 0);
+
+  // initialize index of column where clustering will start.
+  const int lastColumn =
+      (forwardPass ? lastColumnForwardPass : lastColumnBackwardPass);
+
+  for (int currentMergeColumn = startColumn;
+       (forwardPass ? currentMergeColumn <= lastColumn
+                    : currentMergeColumn >= lastColumn);
        currentMergeColumn += forwardPass ? 1 : -1) {
 
     // process each row in a top-down approach
