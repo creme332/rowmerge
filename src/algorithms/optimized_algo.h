@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-
+ 
 class OptimizedAlgorithm {
 public:
     std::string solve(std::vector<std::vector<std::string>>& input);
