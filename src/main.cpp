@@ -120,7 +120,7 @@ int getValidatedInt(const std::string &prompt) {
  *
  */
 void clusterExerciseWorkflow() {
-  const std::string start_directory = "data/";
+  const std::string start_directory = "../data/";
   int columnCount = 4; // number of columns to be clustered
   int startColumn = 1;
   bool forwardPass = true;
@@ -130,6 +130,16 @@ void clusterExerciseWorkflow() {
 
   // Determine path to input file
   std::string input_filepath = start_directory + input_filename;
+
+  // Validate input file
+  std::cout << "Validating input file..." << std::endl;
+  auto input_csv_validation = CSVHandler::isValidCSV(input_filepath);
+  if (!input_csv_validation.first) {
+    std::cerr << "Input CSV Error: " << input_csv_validation.second
+              << std::endl;
+    return;
+  }
+  std::cout << "Input valid." << std::endl;
 
   do {
     std::cout << "Choose pass direction (1 = Forward, 0 = Backward): ";
