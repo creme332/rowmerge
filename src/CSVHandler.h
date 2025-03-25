@@ -26,11 +26,16 @@ public:
   static std::string readCSVAsString(const std::string &filename);
 
   /**
-   * @brief Reads the entire content of a CSV file and returns it as a vector.
+   * @brief Reads a CSV file and parses its contents into a vector of rows,
+   *        where each row is represented as a vector of strings (columns).
    *
-   * @param filename The name of the CSV file to read.
-   * @return std::string The content of the CSV file. Returns an empty string if
-   * an error occurs.
+   * @param filename The path to the CSV file.
+   * @return A vector of rows, where each row is a vector of strings
+   * representing the columns.
+   * @throws std::runtime_error If the file cannot be opened.
+   *
+   * @note This function assumes that the CSV file uses commas (`,`) as the
+   * delimiter. It does not handle quoted values or escape characters.
    */
   static std::vector<std::vector<std::string>>
   readCSVAsVector(const std::string &filename);
