@@ -14,10 +14,21 @@ add_executable(rowmerge
     ${ALGO_SOURCES}
 )
 
+# Enable testing and include CTest module
 enable_testing()
 include(CTest)
 
-add_library(test_main OBJECT tests/test_main.cpp)
+# Create the test executable
+add_library(test_main OBJECT tests/test_runner.cpp)
 
-add_executable(test1 tests/test1.cpp src/validator.cpp $<TARGET_OBJECTS:test_main>)
-add_test(NAME Validator_Test COMMAND test1)
+# Add the test for the Validator class
+add_executable(validator_test tests/validator_test.cpp src/validator.cpp $<TARGET_OBJECTS:test_main>)
+add_test(NAME Validator_Test COMMAND validator_test)
+
+# Add the test for the CSVHandler class
+add_executable(csv_handler_test tests/csv_handler_test.cpp src/CSVHandler.cpp $<TARGET_OBJECTS:test_main>)
+add_test(NAME CSVHandler_Test COMMAND csv_handler_test)
+
+# Add the test for the TrivialAlgorithm class
+add_executable(trivial_algo_test tests/algorithms/trivial_algo_test.cpp src/algorithms/trivial_algo.cpp $<TARGET_OBJECTS:test_main>)
+add_test(NAME Trivial_Algorithm_Test COMMAND trivial_algo_test)
