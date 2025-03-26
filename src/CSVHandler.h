@@ -8,12 +8,13 @@
 #include <sys/stat.h> // For checking file existence and size
 #include <utility>    // For std::pair
 #include <vector>
+#include <unordered_set>
 
-/**
- * @class CSVHandler
+/*class CSVHandler
  * @brief A utility class for handling CSV file operations, including reading,
  * writing, and validation.
  */
+
 class CSVHandler {
 public:
   /**
@@ -57,6 +58,9 @@ public:
    * valid." if valid.
    */
   static std::pair<bool, std::string> isValidCSV(const std::string &filename);
+  
+  static std::string generate(const int rows, const int cols);
+
 };
 
 #endif // CSV_HANDLER_H
