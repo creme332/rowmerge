@@ -6,7 +6,7 @@
 #include <limits>
 #include <vector>
 
-namespace fs = std::filesystem ;
+namespace fs = std::filesystem;
 
 /**
  * @brief Workflow for main program that compresses an input CSV. The output is
@@ -16,31 +16,6 @@ namespace fs = std::filesystem ;
 void mainWorkflow() {
   std::string input_filename;
   const std::string output_filename = "output.csv";
-
-  // Prompt the user with to either generate a CSV file or to procvide an existing CSV file 
-
-  int choice;
-  std::cout << "Choose an option:\n1. Generate CSV\n2. Provide existing CSV file\nEnter choice: ";
-  std::cin >> choice;
-
-  std::string csvContent;
-
-  if (choice == 1) {
-    int rows, cols;
-    std::cout << "Enter number of rows: ";
-    std::cin >> rows;
-    std::cout << "Enter number of columns: ";
-    std::cin >> cols;
-
-    csvContent = CSVHandler::generate(rows, cols);
-    input_filename = "generated.csv";
-
-    if (!CSVHandler::writeToFile(input_filename, csvContent)) {
-      std::cerr << "Error writing generated CSV to file." << std::endl;
-      return;
-    }
-
-  } else {
 
   // Prompt the user to input the file names
   std::cout << "Enter the input file name (e.g., input.csv): ";
@@ -52,12 +27,9 @@ void mainWorkflow() {
     std::cerr << "Validation Error: " << csv_validation.second << std::endl;
     return;
   }
- 
 
   // Reading from CSV
   std::string csvContent = CSVHandler::readCSVAsString(input_filename);
-
-}
 
   // Compress CSV
   TrivialAlgorithm algo;
