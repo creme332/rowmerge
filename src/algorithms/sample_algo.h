@@ -16,6 +16,6 @@ public:
   std::string solve(const std::string &input) override;
 
   std::string solve(std::vector<std::vector<std::string>> &input) override;
-};
+}; 
 
 #endif

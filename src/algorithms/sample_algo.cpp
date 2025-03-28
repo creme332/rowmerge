@@ -11,4 +11,4 @@ std::string
 SampleAlgorithm::solve(std::vector<std::vector<std::string>> &input) {
   throw std::runtime_error("Implementation missing");
   return "";
-}
+} 

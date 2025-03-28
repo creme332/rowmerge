@@ -3,6 +3,7 @@
 #include "validator.h"
 #include <filesystem>
 #include <iostream>
+#include <limits>
 #include <vector>
 
 namespace fs = std::filesystem ;
@@ -76,10 +77,12 @@ void mainWorkflow() {
 /**
  * @brief Requests user to select a CSV file to process.
  *
- * @return std::string Path (relative to executable) to the selected CSV file.
+ * @param start_directory Path to directory where CSV files are found. A
+ * trailing slash must be present. E.g.
+ * `../data/`
+ * @return std::string Filename of CSV file selected
  */
-std::string requestFileName() {
-  const std::string start_directory = "data";
+std::string requestFileName(const std::string start_directory) {
   std::vector<std::string> csv_files;
 
   // Check if the directory exists
@@ -103,19 +106,37 @@ std::string requestFileName() {
   // Display the list of CSV files
   std::cout << "Available CSV files:\n";
   for (size_t i = 0; i < csv_files.size(); ++i) {
-    std::cout << i + 1 << ". " << csv_files[i] << "\n";
+    std::cout << "  " << i + 1 << ". " << csv_files[i] << "\n";
   }
+
+  std::cout << std::endl;
 
   // User selection
-  size_t choice;
-  std::cout << "Enter the number of the file you want to select: ";
-  std::cin >> choice;
-
-  if (choice < 1 || choice > csv_files.size()) {
-    throw std::runtime_error("Invalid selection.");
+  size_t choice = -1;
+  while (choice < 1 || choice > csv_files.size()) {
+    std::cout << "Enter the number of the file you want to select: ";
+    std::cin >> choice;
   }
 
-  return start_directory + "/" + csv_files[choice - 1];
+  return csv_files[choice - 1];
+}
+
+int getValidatedInt(const std::string &prompt) {
+  int value;
+  while (true) {
+    std::cout << prompt;
+    std::cin >> value;
+
+    if (std::cin.fail()) {
+      std::cin.clear(); // Clear error flag
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                      '\n'); // Discard input
+      std::cout << "Invalid input! Please enter a valid number.\n";
+    } else {
+      break; // Valid input
+    }
+  }
+  return value;
 }
 
 /**
@@ -127,24 +148,46 @@ std::string requestFileName() {
  *
  */
 void clusterExerciseWorkflow() {
-  const std::string output_filename = "output.csv";
-
-  std::string input_filename = "../data/mini.csv";
+  const std::string start_directory = "../data/";
   int columnCount = 4; // number of columns to be clustered
+  int startColumn = 1;
   bool forwardPass = true;
 
   // Prompt user for input
-  input_filename = requestFileName();
+  std::string input_filename = requestFileName(start_directory);
 
-  std::cout
-      << "Do you want to perform a forward pass (1) or backward pass (0)? ";
-  std::cin >> forwardPass;
+  // Determine path to input file
+  std::string input_filepath = start_directory + input_filename;
 
-  std::cout << "Enter the number of columns to be clustered: ";
-  std::cin >> columnCount;
+  // Validate input file
+  std::cout << "Validating input file..." << std::endl;
+  auto input_csv_validation = CSVHandler::isValidCSV(input_filepath);
+  if (!input_csv_validation.first) {
+    std::cerr << "Input CSV Error: " << input_csv_validation.second
+              << std::endl;
+    return;
+  }
+  std::cout << "Input valid." << std::endl;
+
+  do {
+    std::cout << "Choose pass direction (1 = Forward, 0 = Backward): ";
+    std::cin >> forwardPass;
+
+    if (std::cin.fail() || (forwardPass != 0 && forwardPass != 1)) {
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      std::cout << "Invalid choice! Please enter 0 or 1.\n";
+    } else {
+      break;
+    }
+  } while (true);
+
+  std::cout << "Enter clustering details:\n";
+  startColumn = getValidatedInt("  - Start column index (zero-based): ");
+  columnCount = getValidatedInt("  - Number of columns to cluster: ");
 
   // Validating CSV
-  auto csv_validation = CSVHandler::isValidCSV(input_filename);
+  auto csv_validation = CSVHandler::isValidCSV(input_filepath);
   if (!csv_validation.first) {
     std::cerr << "Validation Error: " << csv_validation.second << std::endl;
     return;
@@ -152,22 +195,33 @@ void clusterExerciseWorkflow() {
 
   // Reading from CSV
   std::vector<std::vector<std::string>> csvContentAsVector =
-      CSVHandler::readCSVAsVector(input_filename);
+      CSVHandler::readCSVAsVector(input_filepath);
 
   // Perform clustering
-  std::cout << "Processing..." << std::endl;
+  std::cout << std::endl << "Processing..." << std::endl;
   std::string output = TrivialAlgorithm::clusterByColumns(
-      csvContentAsVector, columnCount, forwardPass);
+      csvContentAsVector, startColumn, columnCount, forwardPass);
+
+  // Create folder for output
+  fs::create_directory("output");
+  std::string output_filename = "output/" + input_filename;
 
   // Writing to CSV
   if (CSVHandler::writeToFile(output_filename, output)) {
-    std::cout << "Data written to " << output_filename << std::endl;
+    std::cout << "Processing over. Data written to " << output_filename
+              << std::endl;
   }
 
   // Validate output
-  std::string csvContentAsString = CSVHandler::readCSVAsString(input_filename);
+  std::cout << "Validating output..." << std::endl;
+  std::string csvContentAsString = CSVHandler::readCSVAsString(input_filepath);
   auto validation = Validator::validate_output(csvContentAsString, output);
-  std::cout << "Output validation: " << validation.second << std::endl;
+  std::cout << "Result: " << validation.second << std::endl;
+
+  std::cout << "Press Enter to exit..." << std::endl;
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                  '\n'); // Clear input buffer
+  std::cin.get();        // Wait for user input
 }
 
 int main() {
