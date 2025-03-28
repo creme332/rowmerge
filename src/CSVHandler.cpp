@@ -136,3 +136,32 @@ CSVHandler::isValidCSV(const std::string &filename) {
   // If no issues are found, return success
   return {true, filename + " is valid."};
 }
+
+std::string CSVHandler::generate(const int rows, const int cols) {
+  std::srand(std::time(nullptr));
+  std::stringstream ss;
+  std::unordered_set<std::string> uniqueLines;
+
+  for (int i = 0; i < rows; ++i) {
+
+    std::string line;
+
+    for (int j = 0; j < cols; ++j) {
+      int num = std::rand() % 100 + 1; // Random number between 1 and 100
+      line += std::to_string(num);
+      if (j < cols - 1)
+        line += ",";
+    }
+
+    // Ensure uniqueness of each line
+    if (uniqueLines.find(line) == uniqueLines.end()) {
+      uniqueLines.insert(line);
+      ss << line << "\n";
+    } else {
+      --i; // Regenerate the line if it's not unique
+    }
+  }
+
+  // Return the generated CSV as a string
+  return ss.str();
+}
