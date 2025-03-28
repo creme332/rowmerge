@@ -1,16 +1,4 @@
 #include "CSVHandler.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <utility>
-#include <sys/stat.h>
-#include <unordered_set>
-#include <cstdlib>
-#include <ctime>
-
-
 
 std::string CSVHandler::readCSVAsString(const std::string &filename) {
   auto validation = isValidCSV(filename);
@@ -102,10 +90,9 @@ CSVHandler::isValidCSV(const std::string &filename) {
   }
 
   return {true, filename + " is valid."};
- }
+}
 
- //Adding method generate that takes 2 integers rows and cols and returns a CSV in String format
- std::string CSVHandler::generate(const int rows, const int cols) {
+std::string CSVHandler::generate(const int rows, const int cols) {
   std::srand(std::time(nullptr));
   std::stringstream ss;
   std::unordered_set<std::string> uniqueLines;
@@ -117,9 +104,10 @@ CSVHandler::isValidCSV(const std::string &filename) {
     for (int j = 0; j < cols; ++j) {
       int num = std::rand() % 100 + 1; // Random number between 1 and 100
       line += std::to_string(num);
-      if (j < cols - 1) line += ",";
+      if (j < cols - 1)
+        line += ",";
     }
-  
+
     // Ensure uniqueness of each line
     if (uniqueLines.find(line) == uniqueLines.end()) {
       uniqueLines.insert(line);
@@ -127,15 +115,8 @@ CSVHandler::isValidCSV(const std::string &filename) {
     } else {
       --i; // Regenerate the line if it's not unique
     }
-
   }
 
   // Return the generated CSV as a string
   return ss.str();
-  
-
 }
-
-
-
-

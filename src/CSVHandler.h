@@ -1,14 +1,16 @@
 #ifndef CSV_HANDLER_H
 #define CSV_HANDLER_H
 
+#include <cstdlib>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <sys/stat.h> // For checking file existence and size
-#include <utility>    // For std::pair
-#include <vector>
+#include <sys/stat.h>
 #include <unordered_set>
+#include <utility>
+#include <vector>
 
 /*class CSVHandler
  * @brief A utility class for handling CSV file operations, including reading,
@@ -58,9 +60,19 @@ public:
    * valid." if valid.
    */
   static std::pair<bool, std::string> isValidCSV(const std::string &filename);
-  
-  static std::string generate(const int rows, const int cols);
 
+  /**
+   * @brief Generates a CSV-formatted string with random integers.
+   *
+   * This function creates a CSV-formatted string with the given number of rows
+   * and columns. Each row is unique, and all rows contain the same number of
+   * columns. Each cell contains a randomly generated small integer.
+   *
+   * @param rows The number of rows in the CSV.
+   * @param cols The number of columns in each row.
+   * @return A string containing the generated CSV data.
+   */
+  static std::string generate(const int rows, const int cols);
 };
 
 #endif // CSV_HANDLER_H
