@@ -18,6 +18,7 @@ public:
   void reset(); // Reset the timer
   void
   printElapsedTime() const; // Print the elapsed time in a user-friendly format
+  long long getDurationInMilliseconds() const;
 };
 
 #endif // TIMER_H

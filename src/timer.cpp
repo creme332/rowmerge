@@ -28,14 +28,21 @@ void Timer::printElapsedTime() const {
     int seconds = (elapsed.count() / 1000) % 60;
     int milliseconds = elapsed.count() % 1000;
 
-    if (elapsed.count() >= 1000) {
-      std::cout << "Elapsed Time: " << std::setw(2) << std::setfill('0')
-                << minutes << ":" << std::setw(2) << std::setfill('0')
-                << seconds << "\n";
-    } else {
-      std::cout << "Elapsed Time: " << milliseconds << " ms\n";
-    }
+    std::cout << "Elapsed Time: " << std::setw(2) << std::setfill('0')
+              << minutes << ":" << std::setw(2) << std::setfill('0') << seconds
+              << "." << std::setw(3) << std::setfill('0') << milliseconds
+              << " (seconds + milliseconds)\n";
   } else {
     std::cout << "Timer is still running.\n";
   }
+}
+
+long long Timer::getDurationInMilliseconds() const {
+  if (!is_running) {
+    std::chrono::milliseconds elapsed =
+        std::chrono::duration_cast<std::chrono::milliseconds>(stop_time -
+                                                              start_time);
+    return elapsed.count();
+  }
+  return 0; // Returns 0 if the timer is still running
 }
