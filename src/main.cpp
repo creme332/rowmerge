@@ -121,8 +121,8 @@ int getValidatedInt(const std::string &prompt) {
  */
 void clusterExerciseWorkflow() {
   const std::string start_directory = "../data/";
-  int columnCount = 4; // number of columns to be clustered
-  int startColumn = 1;
+  int columnCount = 5; // number of columns to be clustered
+  int startColumn = 0;
   bool forwardPass = true;
 
   // Prompt user for input
@@ -158,13 +158,6 @@ void clusterExerciseWorkflow() {
   startColumn = getValidatedInt("  - Start column index (zero-based): ");
   columnCount = getValidatedInt("  - Number of columns to cluster: ");
 
-  // Validating CSV
-  auto csv_validation = CSVHandler::isValidCSV(input_filepath);
-  if (!csv_validation.first) {
-    std::cerr << "Validation Error: " << csv_validation.second << std::endl;
-    return;
-  }
-
   // Reading from CSV
   std::vector<std::vector<std::string>> csvContentAsVector =
       CSVHandler::readCSVAsVector(input_filepath);
@@ -190,7 +183,7 @@ void clusterExerciseWorkflow() {
   auto validation = Validator::validate_output(csvContentAsString, output);
   std::cout << "Result: " << validation.second << std::endl;
 
-  std::cout << "Press Enter to exit..." << std::endl;
+  std::cout << std::endl << "Press Enter to exit..." << std::endl;
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
                   '\n'); // Clear input buffer
   std::cin.get();        // Wait for user input
