@@ -42,8 +42,9 @@ std::string TrivialAlgorithm::insertSorted(const std::string sortedStr,
   return result.str();
 }
 
-std::unordered_set<int> findDifferences(const std::vector<std::string> &vec1,
-                                        const std::vector<std::string> &vec2) {
+std::unordered_set<int>
+TrivialAlgorithm::findDifferences(const std::vector<std::string> &vec1,
+                                  const std::vector<std::string> &vec2) {
   std::unordered_set<int> diffIndices;
 
   // Ensure both vectors have the same size
