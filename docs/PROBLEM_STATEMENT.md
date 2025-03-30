@@ -88,38 +88,6 @@ The final compressed result is:
 
 The goal is to develop a heuristic algorithm compression that minimizes the number of rows in the reasonable time.
 
-## Example of a sub-optimal grouping
-
-Input:
-
-```
-1 3 y
-1 3 x
-1 4 x
-2 3 x
-2 4 x
-```
-
-One way to merge the rows:
-
-1. Merge rows 1 and 2 to get `1 3 x|y`.
-2. Merge rows 4 and 5 to get `2 3|4 x`.
-
-The final result becomes
-
-```
-1 3 x|y
-1 4 x
-2 3|4 x
-```
-
-A better way to compress the input is to merge rows 2-5 to get `1|2 3|4 x`. The best result is:
-
-```
-1 3 y
-1|2 3|4 x
-```
-
 ## Constraints
 
 - $K$ and $P$ are positive integers and can be extremely large, ranging from thousands to millions or more.
@@ -130,7 +98,7 @@ A better way to compress the input is to merge rows 2-5 to get `1|2 3|4 x`. The 
 - Your program must read a **CSV** file to get the input data. The file extension should be `.csv`.
 - Each row in the file should be unique.
 - Each row contains the same number of columns.
-- The content of a cell is not important, so it can contain a number, a character, or a string. However, assume that it does not contain the `|` symbol.
+- The content of a cell is not important, so it can contain a number, a character, or a non-empty string. However, assume that it does not contain the `|` and `,` symbols.
 
 
 Examples of valid input file:
