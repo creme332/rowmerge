@@ -1,5 +1,5 @@
-#ifndef SAMPLE_ALGO_H // TODO: change the name of the guards
-#define SAMPLE_ALGO_H
+#ifndef TEMPLATE_H // TODO: change the name of the guards
+#define TEMPLATE_H
 
 #include "algorithm_base.h"
 #include <algorithm>
@@ -16,6 +16,6 @@ public:
   std::string solve(const std::string &input) override;
 
   std::string solve(std::vector<std::vector<std::string>> &input) override;
-}; 
+};
 
 #endif
