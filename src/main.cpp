@@ -1,5 +1,6 @@
 #include "CSVHandler.h"
 #include "algorithms/trivial_algo.h"
+#include "timer.h"
 #include "validator.h"
 #include <filesystem>
 #include <iostream>
@@ -163,9 +164,15 @@ void clusterExerciseWorkflow() {
       CSVHandler::readCSVAsVector(input_filepath);
 
   // Perform clustering
+  Timer timer;
   std::cout << std::endl << "Processing..." << std::endl;
+
+  timer.start();
   std::string output = TrivialAlgorithm::clusterByColumns(
       csvContentAsVector, startColumn, columnCount, forwardPass);
+  timer.stop();
+
+  timer.printElapsedTime();
 
   // Create folder for output
   fs::create_directory("output");

@@ -8,7 +8,8 @@ file(GLOB ALGO_SOURCES src/algorithms/*.cpp)
 
 # Main executable
 add_executable(rowmerge 
-    src/main.cpp 
+    src/main.cpp
+    src/timer.cpp
     src/validator.cpp 
     src/CSVHandler.cpp 
     ${ALGO_SOURCES}
