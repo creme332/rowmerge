@@ -134,10 +134,15 @@ int countRows(const std::string &str) {
  *
  */
 void clusterExerciseWorkflow() {
-  const std::string start_directory = "../data/";
+  std::string start_directory = "data/";
   int columnCount = 5; // number of columns to be clustered
   int startColumn = 0;
   bool forwardPass = true;
+
+  // initialize start directory. If no data directory found, look one level up
+  if (!fs::exists(start_directory) || !fs::is_directory(start_directory)) {
+    start_directory = "../data/";
+  }
 
   // Prompt user for input
   std::string input_filename = requestFileName(start_directory);
