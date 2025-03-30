@@ -41,8 +41,9 @@ private:
    * input vectors differ. If the vectors have different sizes, an error message
    * is displayed, and an empty vector is returned.
    */
-  std::unordered_set<int> findDifferences(const std::vector<std::string> &vec1,
-                                          const std::vector<std::string> &vec2);
+  static std::unordered_set<int>
+  findDifferences(const std::vector<std::string> &vec1,
+                  const std::vector<std::string> &vec2);
 
   /**
    * @brief Inserts a new element into a sorted string while maintaining sorted
