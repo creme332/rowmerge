@@ -112,6 +112,19 @@ int getValidatedInt(const std::string &prompt) {
   return value;
 }
 
+int countRows(const std::string &str) {
+  int rowCount = 0;
+
+  // Count the number of pipes in the string
+  for (char ch : str) {
+    if (ch == '\n') {
+      ++rowCount;
+    }
+  }
+
+  return rowCount;
+}
+
 /**
  * @brief Workflow for the first task assigned:
  *
@@ -173,6 +186,21 @@ void clusterExerciseWorkflow() {
   timer.stop();
 
   timer.printElapsedTime();
+
+  // Calculate compression ratio
+  const int initialRowCount = csvContentAsVector.size();
+  const int finalRowCount = countRows(output);
+
+  // Avoid division by zero in case initialRowCount is 0
+  if (initialRowCount != 0) {
+    double compressionRatio =
+        static_cast<double>(finalRowCount) / initialRowCount;
+    std::cout << "Compression ratio = " << compressionRatio << std::endl;
+  } else {
+    std::cout
+        << "Initial row count is 0, compression ratio cannot be calculated."
+        << std::endl;
+  }
 
   // Create folder for output
   fs::create_directory("output");
