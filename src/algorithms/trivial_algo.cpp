@@ -152,3 +152,50 @@ TrivialAlgorithm::clusterByColumns(std::vector<std::vector<std::string>> input,
 
   return result;
 }
+
+std::string TrivialAlgorithm::clusterWithTolerance(
+    std::vector<std::vector<std::string>> input, int tolerance) {
+  if (tolerance < 1 || tolerance > 3) {
+    throw std::out_of_range("Tolerance must be 1-3.");
+  }
+
+  if (tolerance == 1) {
+    // perform clustering with normal clustering rules
+    // TODO: determine optimal values for startColumn, columnCount, ...
+    return clusterByColumns(input, 0, 100, 1);
+  }
+
+  // for each non-empty pair of rows
+  for (int i = 0; i < input.size(); i++) {
+    if (input[i].empty())
+      continue;
+
+    for (int j = i + 1; j < input.size(); j++) {
+      if (input[j].empty())
+        continue;
+
+      // compute difference
+      std::unordered_set<int> diffIndices = findDifferences(input[i], input[j]);
+
+      // if differences are not within tolerance level, skip pair of rows
+      if (diffIndices.size() > tolerance)
+        continue;
+
+      // perform merging of row i and j then discard row j
+      for (const auto columnIndex : diffIndices) {
+        input[i][columnIndex] =
+            insertSorted(input[i][columnIndex], input[j][columnIndex]);
+        input[j] = {};
+      }
+    }
+  }
+
+  // join rows with newlines
+  std::string result = "";
+  for (int row = 0; row < input.size(); row++) {
+    if (!input[row].empty())
+      result += AlgorithmBase::joinWithComma(input[row]) + "\n";
+  }
+
+  return result;
+}

@@ -28,6 +28,10 @@ public:
                    const int startColumn, int columnCount,
                    const bool forwardPass);
 
+  static std::string
+  clusterWithTolerance(std::vector<std::vector<std::string>> input,
+                       int tolerance);
+
 private:
   /**
    * @brief Finds the indices where two vectors of strings differ.
