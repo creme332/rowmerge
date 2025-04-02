@@ -1,5 +1,8 @@
 #include "CSVHandler.h"
+#include "algorithms/new_algo.h"
+#include "algorithms/optimized_algo.h"
 #include "algorithms/trivial_algo.h"
+
 #include "timer.h"
 #include "validator.h"
 #include <filesystem>
@@ -8,44 +11,6 @@
 #include <vector>
 
 namespace fs = std::filesystem;
-
-/**
- * @brief Workflow for main program that compresses an input CSV. The output is
- * saved to output.csv.
- *
- */
-void mainWorkflow() {
-  std::string input_filename;
-  const std::string output_filename = "output.csv";
-
-  // Prompt the user to input the file names
-  std::cout << "Enter the input file name (e.g., input.csv): ";
-  std::cin >> input_filename;
-
-  // Validating CSV
-  auto csv_validation = CSVHandler::isValidCSV(input_filename);
-  if (!csv_validation.first) {
-    std::cerr << "Validation Error: " << csv_validation.second << std::endl;
-    return;
-  }
-
-  // Reading from CSV
-  std::string csvContent = CSVHandler::readCSVAsString(input_filename);
-
-  // Compress CSV
-  TrivialAlgorithm algo;
-  std::string output = algo.solve(csvContent);
-  std::cout << output << std::endl;
-
-  // Validate output
-  auto validation = Validator::validate_output(csvContent, output);
-  std::cout << "Output validation: " << validation.second << std::endl;
-
-  // Writing to CSV
-  if (CSVHandler::writeToFile(output_filename, output)) {
-    std::cout << "Data written to " << output_filename << std::endl;
-  }
-}
 
 /**
  * @brief Requests user to select a CSV file to process.
@@ -144,6 +109,117 @@ void clusterExerciseWorkflow() {
     start_directory = "../data/";
   }
 
+  // Prompt user for file input
+  std::string input_filename = requestFileName(start_directory);
+  std::string input_filepath = start_directory + input_filename;
+
+  // Reading from CSV
+  std::vector<std::vector<std::string>> csvContentAsVector =
+      CSVHandler::readCSVAsVector(input_filepath);
+
+  // Validate input file
+  auto input_csv_validation = CSVHandler::isValidCSV(input_filepath);
+  if (!input_csv_validation.first) {
+    std::cerr << "❌ " + input_filename + " is invalid: "
+              << input_csv_validation.second << std::endl;
+    return;
+  }
+
+  std::cout << "✅ " + input_filename + " is valid." << std::endl;
+
+  // prompt for tolerance level
+  int tolerance = getValidatedInt("Enter euclidean distance (1-3): ");
+
+  // prompt for additional details if tolerance is 1
+  if (tolerance == 1) {
+    // prompt for clustering details
+    do {
+      std::cout << "Choose pass direction (1 = Forward, 0 = Backward): ";
+      std::cin >> forwardPass;
+
+      if (std::cin.fail() || (forwardPass != 0 && forwardPass != 1)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid choice! Please enter 0 or 1.\n";
+      } else {
+        break;
+      }
+    } while (true);
+
+    std::cout << "Enter clustering details:\n";
+    startColumn = getValidatedInt("  - Start column index (zero-based): ");
+    columnCount = getValidatedInt("  - Number of columns to cluster: ");
+  }
+
+  // Perform clustering
+  std::string output;
+  std::cout << std::endl
+            << "Processing " << input_filename << "..." << std::endl;
+  Timer timer;
+  timer.start();
+  if (tolerance == 1) {
+    output = TrivialAlgorithm::clusterByColumns(csvContentAsVector, startColumn,
+                                                columnCount, forwardPass);
+  } else {
+    output =
+        TrivialAlgorithm::clusterWithTolerance(csvContentAsVector, tolerance);
+  }
+  timer.stop();
+
+  std::cout << "\n--- Statistics ---\n";
+  // print time
+  timer.printElapsedTime();
+
+  // Calculate compression ratio
+  const int initialRowCount = csvContentAsVector.size();
+  const int finalRowCount = countRows(output);
+
+  // Avoid division by zero in case initialRowCount is 0
+  if (initialRowCount != 0) {
+    double compressionRatio =
+        static_cast<double>(finalRowCount) / initialRowCount;
+    std::cout << "Compression ratio = " << compressionRatio
+              << " (smaller = better)" << std::endl;
+  } else {
+    std::cout
+        << "Initial row count is 0, compression ratio cannot be calculated."
+        << std::endl;
+  }
+  std::cout << "------------------\n\n";
+
+  // Create folder for output
+  fs::create_directory("output");
+  std::string output_filename = "output/" + input_filename;
+
+  // Writing to CSV
+  if (CSVHandler::writeToFile(output_filename, output)) {
+    std::cout << "Output written to " << output_filename << std::endl;
+  }
+
+  // Validate output
+  std::cout << "Validating output..." << std::endl;
+  std::string csvContentAsString = CSVHandler::readCSVAsString(input_filepath);
+  auto validation = Validator::validate_output(csvContentAsString, output);
+  std::cout << "Result: " << validation.second << std::endl;
+
+  std::cout << std::endl << "Press Enter to exit..." << std::endl;
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                  '\n'); // Clear input buffer
+  std::cin.get();        // Wait for user input
+}
+
+/**
+ * @brief Workflow for main program that compresses an input CSV.
+ *
+ */
+void mainWorkflow() {
+  std::string start_directory = "data/";
+
+  // initialize start directory. If no data directory found, look one level up
+  if (!fs::exists(start_directory) || !fs::is_directory(start_directory)) {
+    start_directory = "../data/";
+  }
+
   // Prompt user for input
   std::string input_filename = requestFileName(start_directory);
 
@@ -160,34 +236,18 @@ void clusterExerciseWorkflow() {
   }
   std::cout << "Input valid." << std::endl;
 
-  do {
-    std::cout << "Choose pass direction (1 = Forward, 0 = Backward): ";
-    std::cin >> forwardPass;
-
-    if (std::cin.fail() || (forwardPass != 0 && forwardPass != 1)) {
-      std::cin.clear();
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-      std::cout << "Invalid choice! Please enter 0 or 1.\n";
-    } else {
-      break;
-    }
-  } while (true);
-
-  std::cout << "Enter clustering details:\n";
-  startColumn = getValidatedInt("  - Start column index (zero-based): ");
-  columnCount = getValidatedInt("  - Number of columns to cluster: ");
-
   // Reading from CSV
   std::vector<std::vector<std::string>> csvContentAsVector =
       CSVHandler::readCSVAsVector(input_filepath);
 
   // Perform clustering
+  OptimizedAlgorithm algo;
+
   Timer timer;
   std::cout << std::endl << "Processing..." << std::endl;
 
   timer.start();
-  std::string output = TrivialAlgorithm::clusterByColumns(
-      csvContentAsVector, startColumn, columnCount, forwardPass);
+  std::string output = algo.solve(csvContentAsVector);
   timer.stop();
 
   timer.printElapsedTime();
@@ -222,14 +282,51 @@ void clusterExerciseWorkflow() {
   std::string csvContentAsString = CSVHandler::readCSVAsString(input_filepath);
   auto validation = Validator::validate_output(csvContentAsString, output);
   std::cout << "Result: " << validation.second << std::endl;
-
-  std::cout << std::endl << "Press Enter to exit..." << std::endl;
-  std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
-                  '\n'); // Clear input buffer
-  std::cin.get();        // Wait for user input
 }
 
-int main() {
-  clusterExerciseWorkflow();
-  return 0;
+void testAlgorithm(AlgorithmBase &algo) {
+  std::string start_directory = "../data/";
+  Timer timer;
+
+  // Loop through each CSV files for testing
+  for (const auto &entry : fs::directory_iterator(start_directory)) {
+    // ignore non-csv files
+    if (!entry.is_regular_file() || entry.path().extension() != ".csv")
+      continue;
+
+    // construct path to csv file
+    std::string input_filepath =
+        start_directory + entry.path().filename().string();
+
+    std::cout << input_filepath << std::endl;
+
+    // convert csv to vector
+    std::vector<std::vector<std::string>> csvContentAsVector =
+        CSVHandler::readCSVAsVector(input_filepath);
+
+    const int initialRowCount = csvContentAsVector.size();
+
+    // time algorithm
+    timer.reset();
+    timer.start();
+    std::string output = algo.solve(csvContentAsVector);
+    timer.stop();
+
+    // Validate output
+    std::string csvContentAsString =
+        CSVHandler::readCSVAsString(input_filepath);
+    auto validation = Validator::validate_output(csvContentAsString, output);
+    std::cout << "Result: " << validation.second << std::endl;
+
+    const int finalRowCount = countRows(output);
+
+    timer.printElapsedTime();
+
+    double compressionRatio =
+        static_cast<double>(finalRowCount) / initialRowCount;
+    std::cout << "Compression ratio = " << compressionRatio << std::endl;
+    std::cout << std::endl;
+  }
 }
+
+int main() { clusterExerciseWorkflow(); }
