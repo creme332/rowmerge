@@ -7,8 +7,11 @@ std::string TrivialAlgorithm::solve(const std::string &input) {
 
 std::string
 TrivialAlgorithm::solve(std::vector<std::vector<std::string>> &input) {
-  throw std::runtime_error("Implementation missing");
-  return "";
+  // TODO: determine optimal values for startColumn, columnCount, ...
+  const int columnCount = input[0].size();
+  const int rowCount = input.size();
+  const int numberOfColumnsToProcess = std::max(1, int(columnCount * 0.5));
+  return clusterByColumns(input, 0, numberOfColumnsToProcess, 1);
 }
 
 std::string TrivialAlgorithm::insertSorted(const std::string sortedStr,
@@ -161,8 +164,7 @@ std::string TrivialAlgorithm::clusterWithTolerance(
 
   if (tolerance == 1) {
     // perform clustering with normal clustering rules
-    // TODO: determine optimal values for startColumn, columnCount, ...
-    return clusterByColumns(input, 0, 100, 1);
+    return solve(input);
   }
 
   // for each non-empty pair of rows
