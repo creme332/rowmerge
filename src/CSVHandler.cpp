@@ -154,6 +154,12 @@ CSVHandler::isValidCSV(const std::string &filename) {
     lineNumber++;
   }
 
+  if (expectedColumnCount == 1) {
+    return {false,
+            "File contains only 1 column. Ensure that commas are used to "
+            "separate values."};
+  }
+
   // If no issues are found, return success
   return {true, filename + " is valid."};
 }
