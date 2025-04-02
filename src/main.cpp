@@ -152,17 +152,17 @@ void clusterExerciseWorkflow() {
   }
 
   // Perform clustering
+  TrivialAlgorithm algo;
   std::string output;
   std::cout << std::endl
             << "Processing " << input_filename << "..." << std::endl;
   Timer timer;
   timer.start();
   if (tolerance == 1) {
-    output = TrivialAlgorithm::clusterByColumns(csvContentAsVector, startColumn,
-                                                columnCount, forwardPass);
+    output = algo.clusterByColumns(csvContentAsVector, startColumn, columnCount,
+                                   forwardPass);
   } else {
-    output =
-        TrivialAlgorithm::clusterWithTolerance(csvContentAsVector, tolerance);
+    output = algo.clusterWithTolerance(csvContentAsVector, tolerance);
   }
   timer.stop();
 
@@ -284,6 +284,12 @@ void mainWorkflow() {
   std::cout << "Result: " << validation.second << std::endl;
 }
 
+/**
+ * @brief Tests an algorithm against data in `data` folder and outputs
+ * statistics.
+ *
+ * @param algo Algorithm being tested.
+ */
 void testAlgorithm(AlgorithmBase &algo) {
   std::string start_directory = "../data/";
   Timer timer;

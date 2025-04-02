@@ -23,12 +23,12 @@ public:
    * right. Otherwise, columns will be processed from right to left.
    * @return std::string CSV format of compressed output
    */
-  static std::string
+  std::string
   clusterByColumns(std::vector<std::vector<std::string>> input,
                    const int startColumn, int columnCount,
                    const bool forwardPass);
 
-  static std::string
+  std::string
   clusterWithTolerance(std::vector<std::vector<std::string>> input,
                        int tolerance);
 
