@@ -36,6 +36,27 @@ bool CSVHandler::writeToFile(const std::string &filename,
 }
 
 std::vector<std::vector<std::string>>
+CSVHandler::stringToVector(const std::string &str) {
+  std::vector<std::vector<std::string>> result;
+  std::istringstream stream(str);
+  std::string line;
+
+  while (std::getline(stream, line)) { // Read each line
+    std::vector<std::string> row;
+    std::istringstream lineStream(line);
+    std::string cell;
+
+    while (std::getline(lineStream, cell, ',')) { // Split by commas
+      row.push_back(cell);
+    }
+
+    result.push_back(row);
+  }
+
+  return result;
+}
+
+std::vector<std::vector<std::string>>
 CSVHandler::readCSVAsVector(const std::string &filename) {
   std::vector<std::vector<std::string>> data;
   std::ifstream file(filename);

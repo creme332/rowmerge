@@ -44,6 +44,15 @@ public:
   readCSVAsVector(const std::string &filename);
 
   /**
+   * @brief Converts the string representation of a file to a 2D vector.
+   *
+   * @param str String representation of 2D vector
+   * @return std::vector<std::vector<std::string>>
+   */
+  static std::vector<std::vector<std::string>>
+  stringToVector(const std::string &str);
+
+  /**
    * @brief Writes a string content to a specified file.
    *
    * @param filename The name of the file to write to.
