@@ -5,15 +5,8 @@
 #include <unordered_set>
 
 std::string CSVHandler::readCSVAsString(const std::string &filename) {
-  auto validation = isValidCSV(filename);
-  if (!validation.first) {
-    std::cerr << "Error: " << validation.second << std::endl;
-    return "";
-  }
-
   std::ifstream file(filename);
   if (!file || !file.is_open()) {
-    std::cerr << "Error: Unable to open file " << filename << std::endl;
     return "";
   }
 
