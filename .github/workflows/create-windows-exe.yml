@@ -23,8 +23,15 @@ jobs:
         cmake ..
         cmake --build . --config Release
 
-    - name: Upload executable
+    - name: Upload rowmerge executable
       uses: actions/upload-artifact@v4
       with:
         name: rowmerge.exe
-        path: build/Release/rowmerge.exe 
+        path: build/Release/rowmerge.exe
+    
+    - name: Upload validator executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: validator.exe
+        path: build/Release/validator.exe
+

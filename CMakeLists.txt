@@ -15,6 +15,13 @@ add_executable(rowmerge
     ${ALGO_SOURCES}
 )
 
+# Executable for validation program
+add_executable(validator 
+    src/validator_main.cpp
+    src/validator.cpp 
+    src/CSVHandler.cpp 
+)
+
 # Enable testing and include CTest module
 enable_testing()
 include(CTest)

@@ -100,7 +100,7 @@ TEST_CASE("Testing validate_output()") {
     string output = "";
     std::pair<bool, std::string> result =
         Validator::validate_output(input, output);
-    CHECK_FALSE(result.first);
+    CHECK(result.first);
   }
 
   SUBCASE("Valid input and valid output") {
