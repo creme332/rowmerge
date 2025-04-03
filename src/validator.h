@@ -21,7 +21,7 @@ public:
    * compressed. It works by unmerging each row of `output` and comparing it
    * with `input`.
    *
-   * @param input Initial CSV file
+   * @param input Initial valid CSV file
    * @param output Final CSV file after compression
    * @return std::pair<bool, std::string>
    */

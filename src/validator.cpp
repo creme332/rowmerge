@@ -3,26 +3,35 @@
 std::pair<bool, std::string>
 Validator::validate_output(const std::string &input,
                            const std::string &output) {
-  if (input.empty()) {
-    return {false, "Input is empty."};
+  if (input.empty() && output.empty()) {
+    return {true, "Validation successful."};
   }
 
-  if (output.empty()) {
-    return {false, "Output is empty."};
+  if (!input.empty() && output.empty()) {
+    return {false, "Output should not be empty."};
   }
 
+  if (input.empty() && !output.empty()) {
+    return {false, "Output should be empty."};
+  }
+
+  // create a vector of input rows
   std::vector in_rows = split(input, '\n');
+
+  // create a vector of output rows
   std::vector out_rows = split(output, '\n');
 
+  // Create a map where the key is a row in input and
+  // the value represents whether or not the row is missing from output
   std::map<std::string, int> row_counter;
-
-  // TODO: Ensure that input has no duplicate lines by calling validate_input??
   for (std::string row : in_rows) {
+    // ignore empty rows and assume all remaining rows are missing from output
     if (row.size() > 0)
       row_counter.insert({row, 1});
   }
 
   for (std::string row : out_rows) {
+    // unmerge each row in output
     std::deque<std::string> unmerged_rows = unmerge(row);
     for (std::string urow : unmerged_rows) {
 
@@ -77,8 +86,10 @@ void Validator::unmerge(std::vector<std::string> columns, int i,
   if (i < 0 || columns.size() == 0)
     return;
 
-  // check if "|" symbol is not present in columns[i]
+  // Case 1: "|" symbol is not present in current column
+
   if (columns[i].find('|') == std::string::npos) {
+    // initialize acc if empty
     if (acc.size() == 0) {
       acc.push_back(columns[i]);
     } else {
@@ -91,21 +102,26 @@ void Validator::unmerge(std::vector<std::string> columns, int i,
     return;
   }
 
-  // "|" symbol is present in columns
-  // get each possible value for current column
+  // Case 2: "|" symbol is present in current column
+
+  // split current column using pipe symbol as separator
   std::vector groups = split(columns[i], '|');
 
-  // initialize acc if empty
+  // Case 2.1: Accumulator is empty
+
+  // initialize empty acc with all elements in current column
   if (acc.size() == 0) {
     // push all elements of groups into acc
     for (auto g : groups) {
       acc.push_back(g);
     }
+    // unmerge remaining columns
     unmerge(columns, i - 1, acc);
     return;
   }
 
-  // create all possible combinations by combining each element of groups
+  // Case 2.2: Accumulator is non-empty
+  // Create all possible combinations by combining each element of groups
   // with each element of acc
   int count = acc.size();
   while (count--) {
