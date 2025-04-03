@@ -1,4 +1,4 @@
-#include "sample_algo.h" // TODO: Change header file
+#include "template.h" // TODO: Change header file
 
 // TODO: Replace SampleAlgorithm with the name of your class
 

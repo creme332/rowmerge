@@ -7,14 +7,68 @@ std::string TrivialAlgorithm::solve(const std::string &input) {
 
 std::string
 TrivialAlgorithm::solve(std::vector<std::vector<std::string>> &input) {
-  throw std::runtime_error("Implementation missing");
-  return "";
+  // TODO: determine optimal values for startColumn, columnCount, ...
+  const int columnCount = input[0].size();
+  const int rowCount = input.size();
+  const int numberOfColumnsToProcess = std::max(1, int(columnCount * 0.5));
+  return clusterByColumns(input, 0, numberOfColumnsToProcess, 1);
+}
+
+std::string TrivialAlgorithm::insertSorted(const std::string sortedStr,
+                                           const std::string newElement) {
+  if (sortedStr.empty())
+    return newElement; // If the sorted string is empty, return the new element.
+
+  std::vector<std::string> elements;
+  std::stringstream ss(sortedStr);
+  std::string item;
+
+  // Split the input string into a vector
+  while (std::getline(ss, item, '|')) {
+    elements.push_back(item);
+  }
+
+  // Use lower_bound to find the correct insertion position
+  auto it = std::lower_bound(elements.begin(), elements.end(), newElement);
+
+  // Insert the new element while maintaining sorted order
+  elements.insert(it, newElement);
+
+  // Construct the sorted string
+  std::ostringstream result;
+  for (size_t i = 0; i < elements.size(); ++i) {
+    if (i > 0)
+      result << "|";
+    result << elements[i];
+  }
+
+  return result.str();
+}
+
+std::unordered_set<int>
+TrivialAlgorithm::findDifferences(const std::vector<std::string> &vec1,
+                                  const std::vector<std::string> &vec2) {
+  std::unordered_set<int> diffIndices;
+
+  // Ensure both vectors have the same size
+  if (vec1.size() != vec2.size()) {
+    throw std::out_of_range("Error: Vectors must be of the same length.\n");
+  }
+
+  // Compare elements and store indices where they differ
+  for (size_t i = 0; i < vec1.size(); ++i) {
+    if (vec1[i] != vec2[i]) {
+      diffIndices.insert(i);
+    }
+  }
+
+  return diffIndices;
 }
 
 std::string
 TrivialAlgorithm::clusterByColumns(std::vector<std::vector<std::string>> input,
                                    const int startColumn, int columnCount,
-                                   bool forwardPass) {
+                                   const bool forwardPass) {
   // determine the number of columns in each row
   const int totalColumns = input[0].size();
 
@@ -43,6 +97,7 @@ TrivialAlgorithm::clusterByColumns(std::vector<std::vector<std::string>> input,
   const int lastColumn =
       (forwardPass ? lastColumnForwardPass : lastColumnBackwardPass);
 
+  // for each column to be clustered
   for (int currentMergeColumn = startColumn;
        (forwardPass ? currentMergeColumn <= lastColumn
                     : currentMergeColumn >= lastColumn);
@@ -50,11 +105,11 @@ TrivialAlgorithm::clusterByColumns(std::vector<std::vector<std::string>> input,
 
     // process each row in a top-down approach
     for (int row = 0; row < input.size(); row++) {
+
       // skip empty/deleted rows
       std::vector<std::string> &currentRow = input[row];
       if (currentRow.empty())
         continue;
-      const std::string currentRowCol = currentRow[currentMergeColumn];
 
       // look for a row that differs from current row only at currentMergeColumn
       for (int nrow = row + 1; nrow < input.size(); nrow++) {
@@ -65,7 +120,7 @@ TrivialAlgorithm::clusterByColumns(std::vector<std::vector<std::string>> input,
           continue;
 
         // look for a row which differs from row by only currentMergeColumn
-        if (currentRowCol == otherRow[currentMergeColumn])
+        if (currentRow[currentMergeColumn] == otherRow[currentMergeColumn])
           continue;
 
         bool goodRow = true;
@@ -79,7 +134,8 @@ TrivialAlgorithm::clusterByColumns(std::vector<std::vector<std::string>> input,
 
         if (goodRow) {
           // merge row and nrow at column currentMergeColumn
-          currentRow[currentMergeColumn] += "|" + otherRow[currentMergeColumn];
+          currentRow[currentMergeColumn] = insertSorted(
+              currentRow[currentMergeColumn], otherRow[currentMergeColumn]);
           input[nrow] = {};
         }
       }
@@ -88,6 +144,52 @@ TrivialAlgorithm::clusterByColumns(std::vector<std::vector<std::string>> input,
     columnCount--;
     if (columnCount <= 0)
       break;
+  }
+
+  // join rows with newlines
+  std::string result = "";
+  for (int row = 0; row < input.size(); row++) {
+    if (!input[row].empty())
+      result += AlgorithmBase::joinWithComma(input[row]) + "\n";
+  }
+
+  return result;
+}
+
+std::string TrivialAlgorithm::clusterWithTolerance(
+    std::vector<std::vector<std::string>> input, int tolerance) {
+  if (tolerance < 1 || tolerance > 3) {
+    throw std::out_of_range("Tolerance must be 1-3.");
+  }
+
+  if (tolerance == 1) {
+    // perform clustering with normal clustering rules
+    return solve(input);
+  }
+
+  // for each non-empty pair of rows
+  for (int i = 0; i < input.size(); i++) {
+    if (input[i].empty())
+      continue;
+
+    for (int j = i + 1; j < input.size(); j++) {
+      if (input[j].empty())
+        continue;
+
+      // compute difference
+      std::unordered_set<int> diffIndices = findDifferences(input[i], input[j]);
+
+      // if differences are not within tolerance level, skip pair of rows
+      if (diffIndices.size() > tolerance)
+        continue;
+
+      // perform merging of row i and j then discard row j
+      for (const auto columnIndex : diffIndices) {
+        input[i][columnIndex] =
+            insertSorted(input[i][columnIndex], input[j][columnIndex]);
+        input[j] = {};
+      }
+    }
   }
 
   // join rows with newlines
