@@ -196,11 +196,14 @@ void clusterExerciseWorkflow() {
     std::cout << "Output written to " << output_filename << std::endl;
   }
 
-  // Validate output
-  std::cout << "Validating output..." << std::endl;
-  std::string csvContentAsString = CSVHandler::readCSVAsString(input_filepath);
-  auto validation = Validator::validate_output(csvContentAsString, output);
-  std::cout << "Result: " << validation.second << std::endl;
+  // Validate output if tolerance is default = 1
+  if (tolerance == 1) {
+    std::cout << "Validating output..." << std::endl;
+    std::string csvContentAsString =
+        CSVHandler::readCSVAsString(input_filepath);
+    auto validation = Validator::validate_output(csvContentAsString, output);
+    std::cout << "Result: " << validation.second << std::endl;
+  }
 
   std::cout << std::endl << "Press Enter to exit..." << std::endl;
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
