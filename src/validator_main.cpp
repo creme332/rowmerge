@@ -26,8 +26,8 @@ int main() {
   std::cin >> output_path;
 
   // read input and output files
-  std::string input = CSVHandler::readCSVAsString(input_path);
-  std::string output = CSVHandler::readCSVAsString(output_path);
+  std::string input = CSVHandler::readFile(input_path);
+  std::string output = CSVHandler::readFile(output_path);
 
   // validate input file
   auto input_csv_validation = CSVHandler::isValidCSV(input_path);

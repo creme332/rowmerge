@@ -200,7 +200,7 @@ void clusterExerciseWorkflow() {
   if (tolerance == 1) {
     std::cout << "Validating output..." << std::endl;
     std::string csvContentAsString =
-        CSVHandler::readCSVAsString(input_filepath);
+        CSVHandler::readFile(input_filepath);
     auto validation = Validator::validate_output(csvContentAsString, output);
     std::cout << "Result: " << validation.second << std::endl;
   }
@@ -282,7 +282,7 @@ void mainWorkflow() {
 
   // Validate output
   std::cout << "Validating output..." << std::endl;
-  std::string csvContentAsString = CSVHandler::readCSVAsString(input_filepath);
+  std::string csvContentAsString = CSVHandler::readFile(input_filepath);
   auto validation = Validator::validate_output(csvContentAsString, output);
   std::cout << "Result: " << validation.second << std::endl;
 }
@@ -323,7 +323,7 @@ void testAlgorithm(AlgorithmBase &algo) {
 
     // Validate output
     std::string csvContentAsString =
-        CSVHandler::readCSVAsString(input_filepath);
+        CSVHandler::readFile(input_filepath);
     auto validation = Validator::validate_output(csvContentAsString, output);
     std::cout << "Result: " << validation.second << std::endl;
 
