@@ -187,8 +187,8 @@ std::string TrivialAlgorithm::clusterWithTolerance(
       for (const auto columnIndex : diffIndices) {
         input[i][columnIndex] =
             insertSorted(input[i][columnIndex], input[j][columnIndex]);
-        input[j] = {};
       }
+      input[j] = {};
     }
   }
 
