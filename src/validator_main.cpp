@@ -26,25 +26,25 @@ int main() {
   std::cin >> output_path;
 
   // read input and output files
-  std::string input = CSVHandler::readCSVAsString(input_path);
-  std::string output = CSVHandler::readCSVAsString(output_path);
+  std::string input = CSVHandler::readFile(input_path);
+  std::string output = CSVHandler::readFile(output_path);
 
   // validate input file
   auto input_csv_validation = CSVHandler::isValidCSV(input_path);
 
   if (input_csv_validation.first) {
-    std::cout << "✅ Input valid" << std::endl;
+    std::cout << "+ Input valid" << std::endl;
 
     // validate output against input
     auto output_validation = Validator::validate_output(input, output);
     if (output_validation.first) {
-      std::cout << "✅ Output valid" << std::endl;
+      std::cout << "+ Output valid" << std::endl;
     } else {
-      std::cout << "❌ Output invalid" << std::endl;
+      std::cout << "! Output invalid" << std::endl;
       std::cout << output_validation.second << std::endl;
     }
   } else {
-    std::cout << "❌ Input invalid" << std::endl;
+    std::cout << "! Input invalid" << std::endl;
     std::cout << input_csv_validation.second << std::endl;
   }
 

@@ -20,13 +20,14 @@
 class CSVHandler {
 public:
   /**
-   * @brief Reads the entire content of a CSV file and returns it as a string.
+   * @brief Reads the entire content of a file and returns it as a string.
+   * Newlines are normalized.
    *
    * @param filename The name of the CSV file to read.
    * @return std::string The content of the CSV file. Returns an empty string if
    * an error occurs.
    */
-  static std::string readCSVAsString(const std::string &filename);
+  static std::string readFile(const std::string &filename);
 
   /**
    * @brief Reads a CSV file and parses its contents into a vector of rows,
@@ -35,7 +36,6 @@ public:
    * @param filename The path to the CSV file.
    * @return A vector of rows, where each row is a vector of strings
    * representing the columns.
-   * @throws std::runtime_error If the file cannot be opened.
    *
    * @note This function assumes that the CSV file uses commas (`,`) as the
    * delimiter. It does not handle quoted values or escape characters.
@@ -44,7 +44,7 @@ public:
   readCSVAsVector(const std::string &filename);
 
   /**
-   * @brief Converts the string representation of a file to a 2D vector.
+   * @brief Converts the string representation of a CSV file to a 2D vector.
    *
    * @param str String representation of 2D vector
    * @return std::vector<std::vector<std::string>>
@@ -53,7 +53,8 @@ public:
   stringToVector(const std::string &str);
 
   /**
-   * @brief Writes a string content to a specified file.
+   * @brief Writes a string content to a specified file. Newlines are
+   * normalized.
    *
    * @param filename The name of the file to write to.
    * @param content The string content to be written to the file.

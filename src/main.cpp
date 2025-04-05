@@ -119,12 +119,12 @@ void clusterExerciseWorkflow() {
   // Validate input file
   auto input_csv_validation = CSVHandler::isValidCSV(input_filepath);
   if (!input_csv_validation.first) {
-    std::cerr << "❌ " + input_filename + " is invalid: "
+    std::cerr << "! " + input_filename + " is invalid: "
               << input_csv_validation.second << std::endl;
     return;
   }
 
-  std::cout << "✅ " + input_filename + " is valid." << std::endl;
+  std::cout << "+ " + input_filename + " is valid." << std::endl;
 
   // prompt for tolerance level
   int tolerance = getValidatedInt("Enter euclidean distance (1-3): ");
@@ -157,11 +157,15 @@ void clusterExerciseWorkflow() {
             << "Processing " << input_filename << "..." << std::endl;
   Timer timer;
   timer.start();
-  if (tolerance == 1) {
-    output = algo.clusterByColumns(csvContentAsVector, startColumn, columnCount,
-                                   forwardPass);
-  } else {
-    output = algo.clusterWithTolerance(csvContentAsVector, tolerance);
+  try {
+    if (tolerance == 1) {
+      output = algo.clusterByColumns(csvContentAsVector, startColumn,
+                                     columnCount, forwardPass);
+    } else {
+      output = algo.clusterWithTolerance(csvContentAsVector, tolerance);
+    }
+  } catch (std::exception e) {
+    std::cerr << e.what() << std::endl;
   }
   timer.stop();
 
@@ -195,13 +199,15 @@ void clusterExerciseWorkflow() {
     std::cout << "Output written to " << output_filename << std::endl;
   }
 
-  // Validate output
-  std::cout << "Validating output..." << std::endl;
-  std::string csvContentAsString = CSVHandler::readCSVAsString(input_filepath);
-  auto validation = Validator::validate_output(csvContentAsString, output);
-  std::cout << "Result: " << validation.second << std::endl;
+  // Validate output if tolerance is default = 1
+  if (tolerance == 1) {
+    std::cout << "Validating output..." << std::endl;
+    std::string csvContentAsString = CSVHandler::readFile(input_filepath);
+    auto validation = Validator::validate_output(csvContentAsString, output);
+    std::cout << "Result: " << validation.second << std::endl;
+  }
 
-  std::cout << std::endl << "Press Enter to exit..." << std::endl;
+  std::cout << "\nPress Enter to exit..." << std::flush;
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
                   '\n'); // Clear input buffer
   std::cin.get();        // Wait for user input
@@ -278,7 +284,7 @@ void mainWorkflow() {
 
   // Validate output
   std::cout << "Validating output..." << std::endl;
-  std::string csvContentAsString = CSVHandler::readCSVAsString(input_filepath);
+  std::string csvContentAsString = CSVHandler::readFile(input_filepath);
   auto validation = Validator::validate_output(csvContentAsString, output);
   std::cout << "Result: " << validation.second << std::endl;
 }
@@ -318,8 +324,7 @@ void testAlgorithm(AlgorithmBase &algo) {
     timer.stop();
 
     // Validate output
-    std::string csvContentAsString =
-        CSVHandler::readCSVAsString(input_filepath);
+    std::string csvContentAsString = CSVHandler::readFile(input_filepath);
     auto validation = Validator::validate_output(csvContentAsString, output);
     std::cout << "Result: " << validation.second << std::endl;
 

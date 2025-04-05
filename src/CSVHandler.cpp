@@ -4,27 +4,43 @@
 #include <sstream>
 #include <unordered_set>
 
-std::string CSVHandler::readCSVAsString(const std::string &filename) {
-  std::ifstream file(filename);
-  if (!file || !file.is_open()) {
+std::string CSVHandler::readFile(const std::string &filename) {
+  std::ifstream file(filename, std::ios::binary); // Use binary mode to handle
+                                                  // all newline types correctly
+  std::string content;
+
+  if (!file) {
+    std::cerr << "Error opening file: " << filename << std::endl;
     return "";
   }
 
-  std::stringstream buffer;
-  buffer << file.rdbuf(); // Read entire file into buffer
-  return buffer.str();
+  char ch;
+  while (file.get(ch)) {
+    if (ch == '\r') {
+      // Skip carriage return (CR)
+      continue;
+    } else if (ch == '\n') {
+      // Normalize newline
+      content += '\n';
+    } else {
+      content += ch;
+    }
+  }
+
+  return content;
 }
 
 bool CSVHandler::writeToFile(const std::string &filename,
                              const std::string &content) {
-  std::ofstream file(filename);
+  std::ofstream file(
+      filename, std::ios::binary); // Use binary to prevent newline translation
+
   if (!file) {
-    std::cerr << "Error: Unable to open file " << filename << " for writing."
-              << std::endl;
+    std::cerr << "Error opening file for writing: " << filename << std::endl;
     return false;
   }
 
-  file << content;
+  file.write(content.c_str(), content.size());
   return true;
 }
 
@@ -51,31 +67,7 @@ CSVHandler::stringToVector(const std::string &str) {
 
 std::vector<std::vector<std::string>>
 CSVHandler::readCSVAsVector(const std::string &filename) {
-  std::vector<std::vector<std::string>> data;
-  std::ifstream file(filename);
-
-  // Check if the file opened successfully
-  if (!file || !file.is_open()) {
-    throw std::runtime_error("Could not open file: " + filename);
-  }
-
-  std::string line;
-  // Read the file line by line
-  while (std::getline(file, line)) {
-    std::vector<std::string> row;
-    std::stringstream ss(line);
-    std::string cell;
-
-    // Split the line by commas and store in row vector
-    while (std::getline(ss, cell, ',')) {
-      row.push_back(cell);
-    }
-
-    // Add the parsed row to the data vector
-    data.push_back(row);
-  }
-
-  return data;
+  return stringToVector(readFile(filename));
 }
 
 std::pair<bool, std::string>
@@ -109,6 +101,11 @@ CSVHandler::isValidCSV(const std::string &filename) {
 
   // Read the file line by line
   while (std::getline(file, line)) {
+    // Strip trailing carriage return if present (handles \r\n)
+    if (!line.empty() && line.back() == '\r') {
+      line.pop_back();
+    }
+
     // Reject empty line
     if (line.empty()) {
       return {false, "Line #" + std::to_string(lineNumber) + " is empty."};
