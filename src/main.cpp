@@ -199,13 +199,12 @@ void clusterExerciseWorkflow() {
   // Validate output if tolerance is default = 1
   if (tolerance == 1) {
     std::cout << "Validating output..." << std::endl;
-    std::string csvContentAsString =
-        CSVHandler::readFile(input_filepath);
+    std::string csvContentAsString = CSVHandler::readFile(input_filepath);
     auto validation = Validator::validate_output(csvContentAsString, output);
     std::cout << "Result: " << validation.second << std::endl;
   }
 
-  std::cout << std::endl << "Press Enter to exit..." << std::endl;
+  std::cout << "\nPress Enter to exit..." << std::flush;
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
                   '\n'); // Clear input buffer
   std::cin.get();        // Wait for user input
@@ -322,8 +321,7 @@ void testAlgorithm(AlgorithmBase &algo) {
     timer.stop();
 
     // Validate output
-    std::string csvContentAsString =
-        CSVHandler::readFile(input_filepath);
+    std::string csvContentAsString = CSVHandler::readFile(input_filepath);
     auto validation = Validator::validate_output(csvContentAsString, output);
     std::cout << "Result: " << validation.second << std::endl;
 
