@@ -5,7 +5,7 @@
 #include <unordered_set>
 
 std::string CSVHandler::readCSVAsString(const std::string &filename) {
-  std::ifstream file(filename);
+  std::ifstream file(filename, std::ios::in | std::ios::binary);
   if (!file || !file.is_open()) {
     return "";
   }
@@ -17,7 +17,7 @@ std::string CSVHandler::readCSVAsString(const std::string &filename) {
 
 bool CSVHandler::writeToFile(const std::string &filename,
                              const std::string &content) {
-  std::ofstream file(filename);
+  std::ofstream file(filename, std::ios::out | std::ios::binary);
   if (!file) {
     std::cerr << "Error: Unable to open file " << filename << " for writing."
               << std::endl;
@@ -52,7 +52,7 @@ CSVHandler::stringToVector(const std::string &str) {
 std::vector<std::vector<std::string>>
 CSVHandler::readCSVAsVector(const std::string &filename) {
   std::vector<std::vector<std::string>> data;
-  std::ifstream file(filename);
+  std::ifstream file(filename, std::ios::in | std::ios::binary);
 
   // Check if the file opened successfully
   if (!file || !file.is_open()) {
