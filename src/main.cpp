@@ -158,11 +158,15 @@ void clusterExerciseWorkflow() {
             << "Processing " << input_filename << "..." << std::endl;
   Timer timer;
   timer.start();
-  if (tolerance == 1) {
-    output = algo.clusterByColumns(csvContentAsVector, startColumn, columnCount,
-                                   forwardPass);
-  } else {
-    output = algo.clusterWithTolerance(csvContentAsVector, tolerance);
+  try {
+    if (tolerance == 1) {
+      output = algo.clusterByColumns(csvContentAsVector, startColumn,
+                                     columnCount, forwardPass);
+    } else {
+      output = algo.clusterWithTolerance(csvContentAsVector, tolerance);
+    }
+  } catch (std::exception e) {
+    std::cerr << e.what() << std::endl;
   }
   timer.stop();
 
