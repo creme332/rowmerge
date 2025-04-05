@@ -120,12 +120,12 @@ void clusterExerciseWorkflow() {
   // Validate input file
   auto input_csv_validation = CSVHandler::isValidCSV(input_filepath);
   if (!input_csv_validation.first) {
-    std::cerr << "❌ " + input_filename + " is invalid: "
+    std::cerr << "Х " + input_filename + " is invalid: "
               << input_csv_validation.second << std::endl;
     return;
   }
 
-  std::cout << "✅ " + input_filename + " is valid." << std::endl;
+  std::cout << "√ " + input_filename + " is valid." << std::endl;
 
   // prompt for tolerance level
   int tolerance = getValidatedInt("Enter euclidean distance (1-3): ");
