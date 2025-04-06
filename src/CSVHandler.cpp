@@ -84,7 +84,7 @@ CSVHandler::isValidCSV(const std::string &filename) {
   }
 
   if (fileInfo.st_size == 0) {
-    return {false, filename + " is empty."};
+    return {false, filename + " is an empty file."};
   }
 
   // Open the file
@@ -137,7 +137,7 @@ CSVHandler::isValidCSV(const std::string &filename) {
         return {false, "Line #" + std::to_string(lineNumber) + " has " +
                            std::to_string(columnCount) +
                            " columns, but expected " +
-                           std::to_string(expectedColumnCount) + " columns."};
+                           std::to_string(expectedColumnCount) + " columns. Unexpected column count"};
       }
     }
 
