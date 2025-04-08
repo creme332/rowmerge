@@ -84,7 +84,7 @@ CSVHandler::isValidCSV(const std::string &filename) {
   }
 
   if (fileInfo.st_size == 0) {
-    return {false, filename + " is empty."};
+    return {false, filename + " is an empty file."};
   }
 
   // Open the file
