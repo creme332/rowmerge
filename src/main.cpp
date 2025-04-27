@@ -2,14 +2,39 @@
 #include "algorithms/new_algo.h"
 #include "algorithms/optimized_algo.h"
 #include "algorithms/trivial_algo.h"
-#include <filesystem>
 #include "timer.h"
 #include "validator.h"
+#include <filesystem>
 #include <iostream>
 #include <limits>
 #include <vector>
 
 namespace fs = std::filesystem;
+
+/**
+ * @brief Requests user to enter an integer. If user enters an invalid integer,
+ * he is repeatedly shown the prompt and asked to enter a valid one.
+ *
+ * @param prompt Message shown to user when requesting input
+ * @return int Integer value entered by user
+ */
+int requestInteger(const std::string &prompt) {
+  int value;
+  while (true) {
+    std::cout << prompt;
+    std::cin >> value;
+
+    if (std::cin.fail()) {
+      std::cin.clear(); // Clear error flag
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                      '\n'); // Discard input
+      std::cout << "Invalid input! Please enter a valid number.\n";
+    } else {
+      break; // Valid input
+    }
+  }
+  return value;
+}
 
 /**
  * @brief Requests user to select a CSV file to process.
@@ -49,37 +74,27 @@ std::string requestFileName(const std::string start_directory) {
   std::cout << std::endl;
 
   // User selection
-  size_t choice = -1;
-  while (choice < 1 || choice > csv_files.size()) {
-    std::cout << "Enter the number of the file you want to select: ";
-    std::cin >> choice;
-  }
+  std::string prompt = "Enter the number (1-" +
+                       std::to_string(csv_files.size()) +
+                       ") of the file you want to select: ";
+  size_t choice;
+  do {
+    choice = requestInteger(prompt);
+  } while (choice < 1 || choice > csv_files.size());
 
   return csv_files[choice - 1];
 }
 
-int getValidatedInt(const std::string &prompt) {
-  int value;
-  while (true) {
-    std::cout << prompt;
-    std::cin >> value;
-
-    if (std::cin.fail()) {
-      std::cin.clear(); // Clear error flag
-      std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
-                      '\n'); // Discard input
-      std::cout << "Invalid input! Please enter a valid number.\n";
-    } else {
-      break; // Valid input
-    }
-  }
-  return value;
-}
-
+/**
+ * @brief Counts the number of newlines in a string.
+ *
+ * @param str String with newlines
+ * @return int
+ */
 int countRows(const std::string &str) {
   int rowCount = 0;
 
-  // Count the number of pipes in the string
+  // Count the number of newlines in the string
   for (char ch : str) {
     if (ch == '\n') {
       ++rowCount;
@@ -90,22 +105,37 @@ int countRows(const std::string &str) {
 }
 
 /**
- * @brief Workflow for the first task assigned:
- *
- * User should be able to do clustering for 1, 2, 3, 4, ... columns in any order
- * we want - i.e. starting with the first then second then third or last then
- * one before last etc..
+ * @brief Waits for any input, clearing the buffer and waiting for the user to
+ * press any key. Use this function to avoid closing terminal immediately when
+ * program ends. This gives user time to view output.
  *
  */
-void clusterExerciseWorkflow() {
-  std::string start_directory = "data/";
-  int columnCount = 5; // number of columns to be clustered
-  int startColumn = 0;
-  bool forwardPass = true;
+void endProgram() {
+  std::cout << "\nPress Enter to exit..." << std::flush;
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
+                  '\n'); // Clear input buffer
+  std::cin.get();        // Wait for user input
+  exit(EXIT_SUCCESS);
+}
+
+/**
+ * @brief Program for first 3 tasks assigned from `docs/PROBLEM_STATEMENT.md`.
+ *
+ */
+void mainProgram() {
+  std::string start_directory = "data/"; // directory containing input CSV files
 
   // initialize start directory. If no data directory found, look one level up
   if (!fs::exists(start_directory) || !fs::is_directory(start_directory)) {
     start_directory = "../data/";
+  }
+
+  // If data directory still missing, end program
+  if (!fs::exists(start_directory) || !fs::is_directory(start_directory)) {
+    std::cerr << "Missing data folder! Create a folder 'data' in the current "
+                 "directory"
+              << std::endl;
+    endProgram();
   }
 
   // Prompt user for file input
@@ -121,40 +151,61 @@ void clusterExerciseWorkflow() {
   if (!input_csv_validation.first) {
     std::cerr << "! " + input_filename + " is invalid: "
               << input_csv_validation.second << std::endl;
-    return;
+    endProgram();
   }
 
-  std::cout << "+ " + input_filename + " is valid." << std::endl;
+  // Print details of input file
+  const int initialRowCount = csvContentAsVector.size();
+  const int initialColCount = csvContentAsVector[0].size();
+
+  std::cout << "+ " + input_filename + " is valid. It has " +
+                   std::to_string(initialRowCount) + " rows and " +
+                   std::to_string(initialColCount) + " columns."
+            << std::endl;
+
+  int columnCount = 5;     // number of columns to be clustered
+  int startColumn = 0;     // index of column where clustering will begin
+  bool forwardPass = true; // direction of processing
 
   // prompt for tolerance level
-  int tolerance = getValidatedInt("Enter euclidean distance (1-3): ");
+  int tolerance = 1;
+  do {
+    tolerance = requestInteger("Enter euclidean distance (1-3): ");
+  } while (tolerance < 1 || tolerance > 3);
 
   // prompt for additional details if tolerance is 1
   if (tolerance == 1) {
     // prompt for clustering details
+    int input;
     do {
-      std::cout << "Choose pass direction (1 = Forward, 0 = Backward): ";
-      std::cin >> forwardPass;
-
-      if (std::cin.fail() || (forwardPass != 0 && forwardPass != 1)) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "Invalid choice! Please enter 0 or 1.\n";
-      } else {
-        break;
-      }
-    } while (true);
+      input =
+          requestInteger("Choose pass direction (1 = Forward, 0 = Backward): ");
+      forwardPass = input;
+    } while (input != 1 && input != 0);
 
     std::cout << "Enter clustering details:\n";
-    startColumn = getValidatedInt("  - Start column index (zero-based): ");
-    columnCount = getValidatedInt("  - Number of columns to cluster: ");
+
+    // request startColumn
+    do {
+      startColumn = requestInteger("  - Start column index (0-" +
+                                   std::to_string(initialColCount - 1) + "): ");
+    } while (startColumn < 0 || startColumn >= initialColCount);
+
+    // request columnCount
+    do {
+      columnCount =
+          requestInteger("  - Number of columns (1-" +
+                         std::to_string(initialColCount) + ") to cluster: ");
+    } while (columnCount < 1 || columnCount > initialColCount);
   }
 
-  // Perform clustering
+  // Perform clustering and start a timer
   TrivialAlgorithm algo;
   std::string output;
   std::cout << std::endl
             << "Processing " << input_filename << "..." << std::endl;
+
+  bool errorEncountered = false;
   Timer timer;
   timer.start();
   try {
@@ -166,19 +217,24 @@ void clusterExerciseWorkflow() {
     }
   } catch (std::exception e) {
     std::cerr << e.what() << std::endl;
+    errorEncountered = true;
   }
   timer.stop();
 
+  if (errorEncountered) {
+    endProgram();
+  }
+
   std::cout << "\n--- Statistics ---\n";
+
   // print time
   timer.printElapsedTime();
 
   // Calculate compression ratio
-  const int initialRowCount = csvContentAsVector.size();
-  const int finalRowCount = countRows(output);
 
   // Avoid division by zero in case initialRowCount is 0
   if (initialRowCount != 0) {
+    const int finalRowCount = countRows(output);
     double compressionRatio =
         static_cast<double>(finalRowCount) / initialRowCount;
     std::cout << "Compression ratio = " << compressionRatio
@@ -207,17 +263,15 @@ void clusterExerciseWorkflow() {
     std::cout << "Result: " << validation.second << std::endl;
   }
 
-  std::cout << "\nPress Enter to exit..." << std::flush;
-  std::cin.ignore(std::numeric_limits<std::streamsize>::max(),
-                  '\n'); // Clear input buffer
-  std::cin.get();        // Wait for user input
+  endProgram();
 }
 
 /**
- * @brief Workflow for main program that compresses an input CSV.
+ * @brief Programs that runs a single algorithm without requesting user for
+ * input other than the input file.
  *
  */
-void mainWorkflow() {
+void runAlgorithm() {
   std::string start_directory = "data/";
 
   // initialize start directory. If no data directory found, look one level up
@@ -295,7 +349,7 @@ void mainWorkflow() {
  *
  * @param algo Algorithm being tested.
  */
-void testAlgorithm(AlgorithmBase &algo) {
+void benchmarkAlgorithm(AlgorithmBase &algo) {
   std::string start_directory = "../data/";
   Timer timer;
 
@@ -339,4 +393,4 @@ void testAlgorithm(AlgorithmBase &algo) {
   }
 }
 
-int main() { clusterExerciseWorkflow(); }
+int main() { mainProgram(); }
