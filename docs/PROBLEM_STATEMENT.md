@@ -1,5 +1,16 @@
 # Problem Statement
 
+- [Problem Statement](#problem-statement)
+  - [Instructions](#instructions)
+    - [Constraints](#constraints)
+    - [Input](#input)
+    - [Output](#output)
+  - [Task 1](#task-1)
+  - [Task 2](#task-2)
+  - [Task 3](#task-3)
+
+## Instructions
+
 You are given a table with $P$ rows and $K$ columns **where each row is unique**.
 
 For example if $P=6$ and $K=5$, a possible input is:
@@ -88,12 +99,12 @@ The final compressed result is:
 
 The goal is to develop a heuristic algorithm compression that minimizes the number of rows in the reasonable time.
 
-## Constraints
+### Constraints
 
 - $K$ and $P$ are positive integers and can be extremely large, ranging from thousands to millions or more.
 - You will be assessed on the execution time of your algorithm and the compression ratio achieved.
 
-## Input
+### Input
 
 - Your program must read a **CSV** file to get the input data. The file extension should be `.csv`.
 - Each row in the file should be unique.
@@ -129,8 +140,71 @@ Examples of invalid input file:
 1,1,2
 ```
 
-## Output
+### Output
 
 - You must output your compressed result to a separate CSV file.
 - The order of rows in your output does not matter.
 - The order of values in a merged cell does not matter. `3|4|5` is same as `4|3|5` and other permutations.
+
+
+## Task 1
+
+Write a program that performs clustering of rows given the following parameters:
+
+- Number of columns to be considered for clustering.
+- The direction (forward or backward) of clustering. For a forward pass, process columns from left to right. For backward pass, process columns from right to left.
+
+## Task 2
+
+Extend Task 1 with the following parameters:
+
+- The index of the column where clustering will start.
+- The tolerance level (1, 2, or 3) for merging rows. A tolerance of 1 means that rows must differ by exactly 1 column to be mergeable. A tolerance of 2 means that rows must differ by 1 or 2 columns can be merged. 
+
+## Task 3
+
+This task is identical to Task 1 except that **you are now allowed to duplicate any row in the original input any number of times**. Duplicate rows must be marked differently with an indicator where the number of indicators represent the number of copies. 
+
+The goal is to **minimize the number of duplicate rows created** while minimizing the number of rows in the output.
+
+
+```
+Input:
+
+1 2 3 6
+1 3 3 6
+1 4 3 6
+7 2 3 6
+1 2 4 6
+
+Create 2 copies of row 1:
+
+1^^ 2^^ 3^^ 6^^
+1^^ 2^^ 3^^ 6^^
+1^^ 2^^ 3^^ 6^^
+1 3 3 6
+1 4 3 6
+7 2 3 6
+1 2 4 6
+
+Merge rows 1 & 4 & 5:
+
+1^^ 2^^|3|4 3^^ 6^^
+1^^ 2^^ 3^^ 6^^
+1^^ 2^^ 3^^ 6^^
+7 2 3 6
+1 2 4 6
+
+Merge rows 2 & 4:
+
+1^^ 2^^|3|4 3^^ 6^^
+1^^|7 2^^ 3^^ 6^^
+1^^ 2^^ 3^^ 6^^
+1 2 4 6
+
+Merge rows 3 & 4:
+
+1^^ 2^^|3|4 3^^ 6^^
+1^^|7 2^^ 3^^ 6^^
+1^^ 2^^ 3^^|4 6^^
+```
