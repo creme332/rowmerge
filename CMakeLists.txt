@@ -38,5 +38,5 @@ add_executable(csv_handler_test tests/csv_handler_test.cpp src/CSVHandler.cpp $<
 add_test(NAME CSVHandler_Test COMMAND csv_handler_test)
 
 # Add the test for the TrivialAlgorithm class
-add_executable(trivial_algo_test tests/algorithms/trivial_algo_test.cpp src/algorithms/trivial_algo.cpp $<TARGET_OBJECTS:test_main>)
+add_executable(trivial_algo_test tests/algorithms/trivial_algo_test.cpp src/CSVHandler.cpp src/algorithms/trivial_algo.cpp $<TARGET_OBJECTS:test_main>)
 add_test(NAME Trivial_Algorithm_Test COMMAND trivial_algo_test)

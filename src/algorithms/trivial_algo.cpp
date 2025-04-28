@@ -14,6 +14,54 @@ TrivialAlgorithm::solve(std::vector<std::vector<std::string>> &input) {
   return clusterByColumns(input, 0, numberOfColumnsToProcess, 1);
 }
 
+int TrivialAlgorithm::calculateLoad(const std::vector<std::string> &row) {
+  int load = 1;
+
+  // loop through each column in row
+  for (std::string col : row) {
+    // count number of elements in pipe-separated column
+    int pipeCount = 1;
+    for (char c : col) {
+      if (c == '|')
+        pipeCount++;
+    }
+    // update load
+    load *= pipeCount;
+  }
+
+  return load;
+}
+
+std::string TrivialAlgorithm::clusterWithRowDuplication(
+    std::vector<std::vector<std::string>> input) {
+  // process the input without row duplication rule
+  std::vector<std::vector<std::string>> outputAsVector =
+      CSVHandler::stringToVector(solve(input));
+
+  // loop through each row in output
+  for (int i = 0; i < outputAsVector.size(); i++) {
+    std::vector<std::string> row = outputAsVector[i];
+
+    // ignore rows with load > 1
+    if (calculateLoad(row) != 1)
+      continue;
+
+    // loop through each row in input looking for a row with difference = 1
+    for (int j = 0; j < input.size(); j++) {
+      std::unordered_set<int> diff = findDifferences(row, input[j]);
+      if (diff.size() != 1)
+        continue;
+
+      // merge rows into output vector
+      int mergeColumn = *diff.begin();
+      outputAsVector[i][mergeColumn] =
+          insertSorted(outputAsVector[i][mergeColumn], input[j][mergeColumn]);
+    }
+  }
+
+  return AlgorithmBase::vectorToCSV(outputAsVector);
+}
+
 std::string TrivialAlgorithm::insertSorted(const std::string sortedStr,
                                            const std::string newElement) {
   if (sortedStr.empty())
@@ -146,14 +194,7 @@ TrivialAlgorithm::clusterByColumns(std::vector<std::vector<std::string>> input,
       break;
   }
 
-  // join rows with newlines
-  std::string result = "";
-  for (int row = 0; row < input.size(); row++) {
-    if (!input[row].empty())
-      result += AlgorithmBase::joinWithComma(input[row]) + "\n";
-  }
-
-  return result;
+  return AlgorithmBase::vectorToCSV(input);
 }
 
 std::string TrivialAlgorithm::clusterWithTolerance(
@@ -196,7 +237,7 @@ std::string TrivialAlgorithm::clusterWithTolerance(
   std::string result = "";
   for (int row = 0; row < input.size(); row++) {
     if (!input[row].empty())
-      result += AlgorithmBase::joinWithComma(input[row]) + "\n";
+      result += AlgorithmBase::vectorToCSV(input[row]) + "\n";
   }
 
   return result;

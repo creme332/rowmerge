@@ -163,40 +163,55 @@ void mainProgram() {
                    std::to_string(initialColCount) + " columns."
             << std::endl;
 
+  // define parameters of algorithm
+  int method = 1;          // method chosen by user
   int columnCount = 5;     // number of columns to be clustered
   int startColumn = 0;     // index of column where clustering will begin
   bool forwardPass = true; // direction of processing
-
-  // prompt for tolerance level
   int tolerance = 1;
+
+  // request method
+  std::cout << "\nAvailable methods of clustering: " << std::endl;
+  std::cout << "  - Selective clustering (0)" << std::endl;
+  std::cout << "  - Repetition of rows (1)" << std::endl;
+
   do {
-    tolerance = requestInteger("Enter euclidean distance (1-3): ");
-  } while (tolerance < 1 || tolerance > 3);
+    method = requestInteger("Choose method (0/1): ");
+  } while (method != 1 && method != 0);
 
-  // prompt for additional details if tolerance is 1
-  if (tolerance == 1) {
-    // prompt for clustering details
-    int input;
+  // if selective clustering has been selected, request more info from user
+  if (method == 0) {
+    // prompt for tolerance level
     do {
-      input =
-          requestInteger("Choose pass direction (1 = Forward, 0 = Backward): ");
-      forwardPass = input;
-    } while (input != 1 && input != 0);
+      tolerance = requestInteger("Enter euclidean distance (1-3): ");
+    } while (tolerance < 1 || tolerance > 3);
 
-    std::cout << "Enter clustering details:\n";
+    // prompt for additional details if tolerance is 1
+    if (tolerance == 1) {
+      // prompt for clustering details
+      int input;
+      do {
+        input = requestInteger(
+            "Choose pass direction (1 = Forward, 0 = Backward): ");
+        forwardPass = input;
+      } while (input != 1 && input != 0);
 
-    // request startColumn
-    do {
-      startColumn = requestInteger("  - Start column index (0-" +
-                                   std::to_string(initialColCount - 1) + "): ");
-    } while (startColumn < 0 || startColumn >= initialColCount);
+      std::cout << "Enter clustering details:\n";
 
-    // request columnCount
-    do {
-      columnCount =
-          requestInteger("  - Number of columns (1-" +
-                         std::to_string(initialColCount) + ") to cluster: ");
-    } while (columnCount < 1 || columnCount > initialColCount);
+      // request startColumn
+      do {
+        startColumn =
+            requestInteger("  - Start column index (0-" +
+                           std::to_string(initialColCount - 1) + "): ");
+      } while (startColumn < 0 || startColumn >= initialColCount);
+
+      // request columnCount
+      do {
+        columnCount =
+            requestInteger("  - Number of columns (1-" +
+                           std::to_string(initialColCount) + ") to cluster: ");
+      } while (columnCount < 1 || columnCount > initialColCount);
+    }
   }
 
   // Perform clustering and start a timer
@@ -209,11 +224,15 @@ void mainProgram() {
   Timer timer;
   timer.start();
   try {
-    if (tolerance == 1) {
-      output = algo.clusterByColumns(csvContentAsVector, startColumn,
-                                     columnCount, forwardPass);
+    if (method == 1) {
+      output = algo.clusterWithRowDuplication(csvContentAsVector);
     } else {
-      output = algo.clusterWithTolerance(csvContentAsVector, tolerance);
+      if (tolerance == 1) {
+        output = algo.clusterByColumns(csvContentAsVector, startColumn,
+                                       columnCount, forwardPass);
+      } else {
+        output = algo.clusterWithTolerance(csvContentAsVector, tolerance);
+      }
     }
   } catch (std::exception e) {
     std::cerr << e.what() << std::endl;
@@ -256,7 +275,7 @@ void mainProgram() {
   }
 
   // Validate output if tolerance is default = 1
-  if (tolerance == 1) {
+  if (tolerance == 1 && method == 0) {
     std::cout << "Validating output..." << std::endl;
     std::string csvContentAsString = CSVHandler::readFile(input_filepath);
     auto validation = Validator::validate_output(csvContentAsString, output);
