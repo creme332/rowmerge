@@ -12,6 +12,8 @@
 /**
  * @class Validator
  * @brief Contains functions for validating the output of a heuristic algorithm.
+ * It only validates the output of Task 1 where the original merging rules are
+ * applied. It does not work for the other tasks.
  *
  */
 class Validator {
