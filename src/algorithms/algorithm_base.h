@@ -14,7 +14,8 @@ public:
   virtual ~AlgorithmBase() = default;
 
   /**
-   * @brief Compresses CSV
+   * @brief Compresses CSV using default merging rules. No row repetition or
+   * variable tolerance allowed.
    *
    * @param input CSV file in string format
    * @return std::string
@@ -22,7 +23,8 @@ public:
   virtual std::string solve(const std::string &input) = 0;
 
   /**
-   * @brief Compresses CSV
+   * @brief Compresses CSV using default merging rules. No row repetition or
+   * variable tolerance allowed.
    *
    * @param input CSV file as a 2D vector
    * @return std::string
