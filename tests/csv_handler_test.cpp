@@ -55,7 +55,7 @@ TEST_CASE("Inconsistent columns") {
     createTestFile(filename, "a,b,c\n1,2\n3,4,5\n");
     auto result = CSVHandler::isValidCSV(filename);
     CHECK(result.first == false);
-    CHECK(result.second.find("Unexpected column count") != std::string::npos);
+    CHECK(result.second==  "Line #2 has 2 columns, but expected 3 columns.");
     std::remove(filename.c_str());
 }
 

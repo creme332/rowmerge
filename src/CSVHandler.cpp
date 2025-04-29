@@ -138,7 +138,7 @@ CSVHandler::isValidCSV(const std::string &filename) {
         return {false, "Line #" + std::to_string(lineNumber) + " has " +
                            std::to_string(columnCount) +
                            " columns, but expected " +
-                           std::to_string(expectedColumnCount) + " columns. Unexpected column count"};
+                           std::to_string(expectedColumnCount) + " columns."};
       }
     }
 
