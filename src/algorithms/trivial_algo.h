@@ -4,6 +4,7 @@
 #include "../CSVHandler.h"
 #include "algorithm_base.h"
 #include <algorithm>
+#include <cstdint>
 #include <map>
 #include <optional>
 #include <stdexcept>
