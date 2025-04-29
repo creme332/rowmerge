@@ -1,17 +1,62 @@
 #include "trivial_algo.h"
 
-std::string TrivialAlgorithm::solve(const std::string &input) {
-  throw std::runtime_error("Implementation missing");
-  return "";
-}
-
 std::string
 TrivialAlgorithm::solve(std::vector<std::vector<std::string>> &input) {
-  // TODO: determine optimal values for startColumn, columnCount, ...
+  const int SMALL_DATASET_THRESHOLD = 1e4;
+  const int MEDIUM_DATASET_THRESHOLD = 5e4;
+
   const int columnCount = input[0].size();
   const int rowCount = input.size();
+  const int totalElements = columnCount * rowCount;
+
+  // for small datasets, test all possible parameters
+  if (totalElements <= SMALL_DATASET_THRESHOLD) {
+    std::string bestOutput = "";
+    int minimumLine = INT32_MAX;
+
+    for (int direction = 0; direction < 2; direction++) {
+      for (int startColumn = 0; startColumn < columnCount; startColumn++) {
+        std::string output =
+            clusterByColumns(input, startColumn, columnCount, direction);
+        int lineCount = count(output.begin(), output.end(), '\n');
+
+        if (lineCount < minimumLine) {
+          minimumLine = lineCount;
+          bestOutput = output;
+        }
+      }
+    }
+
+    return bestOutput;
+  }
+
+  // for medium datasets, perform both forward and backward pass and choose best
+  // solution
+  if (totalElements <= MEDIUM_DATASET_THRESHOLD) {
+    const std::string forwardPassOutput =
+        clusterByColumns(input, 0, columnCount, 1);
+    const std::string backwardPassOutput =
+        clusterByColumns(input, columnCount - 1, columnCount, 0);
+
+    // count number of lines in each output
+    int forwardCount =
+        count(forwardPassOutput.begin(), forwardPassOutput.end(), '\n');
+    int backwardCount =
+        count(backwardPassOutput.begin(), backwardPassOutput.end(), '\n');
+
+    return forwardCount > backwardCount ? backwardPassOutput
+                                        : forwardPassOutput;
+  }
+
+  // for large datasets perform forward pass for only half of the columns >= 1
   const int numberOfColumnsToProcess = std::max(1, int(columnCount * 0.5));
   return clusterByColumns(input, 0, numberOfColumnsToProcess, 1);
+}
+
+std::string TrivialAlgorithm::solve(const std::string &input) {
+  std::vector<std::vector<std::string>> inputAsVector =
+      CSVHandler::stringToVector(input);
+  return solve(inputAsVector);
 }
 
 int TrivialAlgorithm::calculateLoad(const std::vector<std::string> &row) {
