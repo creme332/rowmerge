@@ -128,19 +128,19 @@ void mainProgram() {
   // initialize start directory. If no data directory found, look one level up
   if (!fs::exists(start_directory) || !fs::is_directory(start_directory)) {
     start_directory = "../data/";
-  }
 
-  // If data directory still missing, end program
-  if (!fs::exists(start_directory) || !fs::is_directory(start_directory)) {
-    std::cerr << "Missing data folder! Create a folder 'data' in the current "
-                 "directory"
-              << std::endl;
-    endProgram();
+    // If data directory still missing, end program
+    if (!fs::exists(start_directory) || !fs::is_directory(start_directory)) {
+      std::cerr << "Missing data folder! Create a folder 'data' in the current "
+                   "directory"
+                << std::endl;
+      endProgram();
+    }
   }
 
   // Prompt user for file input
-  std::string input_filename = requestFileName(start_directory);
-  std::string input_filepath = start_directory + input_filename;
+  const std::string input_filename = requestFileName(start_directory);
+  const std::string input_filepath = start_directory + input_filename;
 
   // Reading from CSV
   std::vector<std::vector<std::string>> csvContentAsVector =
@@ -160,27 +160,32 @@ void mainProgram() {
 
   std::cout << "+ " + input_filename + " is valid. It has " +
                    std::to_string(initialRowCount) + " rows and " +
-                   std::to_string(initialColCount) + " columns."
-            << std::endl;
+                   std::to_string(initialColCount) + " columns.\n\n";
 
   // define parameters of algorithm
-  int method = 1;          // method chosen by user
+  int modeNumber = 1;      // method chosen by user
   int columnCount = 5;     // number of columns to be clustered
   int startColumn = 0;     // index of column where clustering will begin
   bool forwardPass = true; // direction of processing
   int tolerance = 1;
 
   // request method
-  std::cout << "\nAvailable methods of clustering: " << std::endl;
-  std::cout << "  - Selective clustering (0)" << std::endl;
-  std::cout << "  - Repetition of rows (1)" << std::endl;
+
+  std::cout << "Available clustering modes:\n"
+            << "  0 - Selective clustering\n"
+            << "      • User-defined parameters\n"
+            << "  1 - Normal clustering\n"
+            << "      • Automatically determined parameters\n"
+            << "  2 - Normal clustering with row repetition\n"
+            << "      • Automatically determined parameters\n"
+            << "      • Row repetition allowed\n\n";
 
   do {
-    method = requestInteger("Choose method (0/1): ");
-  } while (method != 1 && method != 0);
+    modeNumber = requestInteger("Choose method (0, 1, or 2): ");
+  } while (modeNumber < 0 || modeNumber > 2);
 
   // if selective clustering has been selected, request more info from user
-  if (method == 0) {
+  if (modeNumber == 0) {
     // prompt for tolerance level
     do {
       tolerance = requestInteger("Enter euclidean distance (1-3): ");
@@ -220,29 +225,32 @@ void mainProgram() {
   std::cout << std::endl
             << "Processing " << input_filename << "..." << std::endl;
 
-  bool errorEncountered = false;
   Timer timer;
   timer.start();
   try {
-    if (method == 1) {
-      output = algo.clusterWithRowDuplication(csvContentAsVector);
-    } else {
+    if (modeNumber == 0) {
+      // selective clustering mode
       if (tolerance == 1) {
         output = algo.clusterByColumns(csvContentAsVector, startColumn,
                                        columnCount, forwardPass);
       } else {
+        // non-default tolerance
         output = algo.clusterWithTolerance(csvContentAsVector, tolerance);
       }
+    } else if (modeNumber == 1) {
+      // normal clustering
+      output = algo.solve(csvContentAsVector);
+    } else {
+      // normal clustering with row repetition
+      output = algo.clusterWithRowDuplication(csvContentAsVector);
     }
   } catch (std::exception e) {
     std::cerr << e.what() << std::endl;
-    errorEncountered = true;
-  }
-  timer.stop();
-
-  if (errorEncountered) {
+    timer.stop();
     endProgram();
   }
+
+  timer.stop();
 
   std::cout << "\n--- Statistics ---\n";
 
@@ -274,8 +282,9 @@ void mainProgram() {
     std::cout << "Output written to " << output_filename << std::endl;
   }
 
-  // Validate output if tolerance is default = 1
-  if (tolerance == 1 && method == 0) {
+  // Validate output if tolerance is default = 1 or normal clustering mode is
+  // used
+  if (modeNumber == 1 || (tolerance == 1 && modeNumber == 0)) {
     std::cout << "Validating output..." << std::endl;
     std::string csvContentAsString = CSVHandler::readFile(input_filepath);
     auto validation = Validator::validate_output(csvContentAsString, output);
@@ -319,7 +328,7 @@ void runAlgorithm() {
       CSVHandler::readCSVAsVector(input_filepath);
 
   // Perform clustering
-  OptimizedAlgorithm algo;
+  TrivialAlgorithm algo;
 
   Timer timer;
   std::cout << std::endl << "Processing..." << std::endl;
