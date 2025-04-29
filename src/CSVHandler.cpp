@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <unordered_set>
+#include <random>
 
 std::string CSVHandler::readFile(const std::string &filename) {
   std::ifstream file(filename, std::ios::binary); // Use binary mode to handle
@@ -155,7 +156,11 @@ CSVHandler::isValidCSV(const std::string &filename) {
 }
 
 std::string CSVHandler::generate(const int rows, const int cols) {
-  std::srand(std::time(nullptr));
+  // Initialize the random number generator
+  std::random_device rd;
+  std::mt19937 gen(rd());  // Mersenne Twister engine for randomness
+  std::uniform_int_distribution<> dist(1, 100);  // Uniform distribution from 1 to 100
+
   std::stringstream ss;
   std::unordered_set<std::string> uniqueLines;
 
@@ -164,7 +169,7 @@ std::string CSVHandler::generate(const int rows, const int cols) {
     std::string line;
 
     for (int j = 0; j < cols; ++j) {
-      int num = std::rand() % 100 + 1; // Random number between 1 and 100
+      int num = dist(gen);  // Generate a random number using the distribution
       line += std::to_string(num);
       if (j < cols - 1)
         line += ",";
@@ -179,6 +184,5 @@ std::string CSVHandler::generate(const int rows, const int cols) {
     }
   }
 
-  // Return the generated CSV as a string
-  return ss.str();
+  return ss.str();  // Return the generated CSV as a string
 }
