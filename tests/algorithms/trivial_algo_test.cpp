@@ -108,4 +108,15 @@ TEST_SUITE("TrivialAlgorithm") {
     std::string result = algo.solve(input);
     CHECK(result == "1,2\n5,3\n");
   }
+
+  TEST_CASE("solve(vector<vector<string>>) - hard case") {
+    TrivialAlgorithm algo;
+    std::vector<std::vector<std::string>> input = {{"1", "3", "5", "5"},
+                                                   {"2", "3", "5", "5"},
+                                                   {"1", "4", "5", "5"},
+                                                   {"2", "4", "5", "5"}};
+
+    std::string result = algo.solve(input);
+    CHECK(result == "1|2,3|4,5,5\n");
+  }
 }
