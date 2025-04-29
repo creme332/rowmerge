@@ -173,12 +173,12 @@ void mainProgram() {
 
   std::cout << "Available clustering modes:\n"
             << "  0 - Selective clustering\n"
-            << "      • User-defined parameters\n"
+            << "      * User-defined parameters\n"
             << "  1 - Normal clustering\n"
-            << "      • Automatically determined parameters\n"
+            << "      * Automatically determined parameters\n"
             << "  2 - Normal clustering with row repetition\n"
-            << "      • Automatically determined parameters\n"
-            << "      • Row repetition allowed\n\n";
+            << "      * Automatically determined parameters\n"
+            << "      * Row repetition allowed\n\n";
 
   do {
     modeNumber = requestInteger("Choose method (0, 1, or 2): ");
