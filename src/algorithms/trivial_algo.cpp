@@ -84,23 +84,28 @@ std::string TrivialAlgorithm::clusterWithRowDuplication(
       CSVHandler::stringToVector(solve(input));
 
   // loop through each row in output
-  for (int i = 0; i < outputAsVector.size(); i++) {
-    std::vector<std::string> row = outputAsVector[i];
+  for (auto &outputRow : outputAsVector) {
 
     // ignore rows with load > 1
-    if (calculateLoad(row) != 1)
+    if (calculateLoad(outputRow) != 1)
       continue;
 
-    // loop through each row in input looking for a row with difference = 1
-    for (int j = 0; j < input.size(); j++) {
-      std::unordered_set<int> diff = findDifferences(row, input[j]);
+    // loop through each row in input
+    for (std::vector<std::string> inputRow : input) {
+      
+      // calculate difference between inputRow and outputRow
+      std::unordered_set<int> diff = findDifferences(outputRow, inputRow);
+
+      // if they differ by more than 1 columns, ignore
       if (diff.size() != 1)
         continue;
 
-      // merge rows into output vector
-      int mergeColumn = *diff.begin();
-      outputAsVector[i][mergeColumn] =
-          insertSorted(outputAsVector[i][mergeColumn], input[j][mergeColumn]);
+      // else they differ at only 1 column => merge
+      int mergeColumn = *diff.begin(); // index of column where rows differ
+      outputRow[mergeColumn] += "|" + inputRow[mergeColumn] + "^";
+
+      // once a row is found, stop search
+      break;
     }
   }
 
