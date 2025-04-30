@@ -1,10 +1,15 @@
 #ifndef CSV_HANDLER_H
 #define CSV_HANDLER_H
 
+#include "algorithms/algorithm_base.h"
+#include "validator.h"
+#include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <sstream>
 #include <string>
 #include <sys/stat.h>
@@ -77,17 +82,21 @@ public:
   static std::pair<bool, std::string> isValidCSV(const std::string &filename);
 
   /**
-   * @brief Generates a CSV-formatted string with random integers.
+   * @brief Generates a CSV-formatted string with random integers. It works by
+   * generating a random compressed CSV string and then unmerges it. This
+   * approach ensures that the generated file contains rows that can actually be
+   * compressed.
    *
-   * This function creates a CSV-formatted string with the given number of rows
-   * and columns. Each row is unique, and all rows contain the same number of
-   * columns. Each cell contains a randomly generated small integer.
-   *
-   * @param rows The number of rows in the CSV.
+   * @param rows The minimum number of rows in the final output.
    * @param cols The number of columns in each row.
-   * @return A string containing the generated CSV data.
+   * @param maxLoad Maximum number of values in a merged cell. The minimum value
+   * is 1.
+   * @return A string containing the uncompressed CSV data.
    */
-  static std::string generate(const int rows, const int cols);
+  static std::string generate(const int minRows, const int cols,
+                              const int maxLoad);
+
+  static std::string joinArrayWithPipe(const std::vector<int> &arr);
 };
 
 #endif // CSV_HANDLER_H
