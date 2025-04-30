@@ -44,7 +44,34 @@ private:
    * assigned to the same thread, increasing the chance for compression via
    * merging.
    */
-  void partitionRows();
+  void partitionRowsUsingHashing();
+
+  /**
+   * @brief Calculate the Hamming distance between two rows.
+   *
+   * The Hamming distance measures how many positions two rows of strings
+   * differ. This method compares two rows element by element and returns the
+   * number of differing elements.
+   *
+   * @param row1 The first row, represented as a vector of strings.
+   * @param row2 The second row, represented as a vector of strings.
+   *
+   * @return The Hamming distance, which is the count of differing positions
+   * between the two rows.
+   */
+  int hammingDistance(const std::vector<std::string> &row1,
+                      const std::vector<std::string> &row2);
+
+  /**
+   * @brief Partition rows based on their Hamming distance.
+   *
+   * This method partitions the dataset into groups where each group contains
+   * rows that are similar based on a defined Hamming distance threshold. The
+   * rows in each group should differ minimally (according to the Hamming
+   * distance). The partitioning is done using a threshold to decide the
+   * grouping.
+   */
+  void partitionRowsUsingHammingDistance();
 
   /**
    * @brief Launch threads to process each partition
