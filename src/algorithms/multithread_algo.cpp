@@ -8,7 +8,16 @@ std::string MultithreadedAlgorithm::solve(const std::string &input) {
 
 std::string
 MultithreadedAlgorithm::solve(std::vector<std::vector<std::string>> &input) {
+  if (input.size() <= 100) {
+    TrivialAlgorithm algo;
+    return algo.solve(input);
+  }
+
+  partitions_.clear();
+  threadResults_.clear();
+  compressedRows_.clear();
   allRows_ = input;
+
   partitionRowsUsingHammingDistance();
   processPartitions();
   mergeThreadResults();
