@@ -204,7 +204,13 @@ std::string CSVHandler::generate(const int minRows, const int cols,
   std::vector<std::vector<std::string>> uncompressedOutput =
       Validator::unmergeRows(ss.str());
 
-  // shuffle arrays for randomness
+  // remove duplicates
+  std::sort(uncompressedOutput.begin(),
+            uncompressedOutput.end()); // Required before std::unique
+  auto last = std::unique(uncompressedOutput.begin(), uncompressedOutput.end());
+  uncompressedOutput.erase(last, uncompressedOutput.end());
+
+  // shuffle result for randomness as unmergeRows groups similar rows
   std::shuffle(uncompressedOutput.begin(), uncompressedOutput.end(), gen);
 
   return AlgorithmBase::vectorToCSV(uncompressedOutput);
