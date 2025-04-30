@@ -35,3 +35,6 @@
 .vscode
 build
 CMakeFiles
+
+# ignore data files over 100mb
+data/5m_10.csv
