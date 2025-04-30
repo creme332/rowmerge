@@ -25,11 +25,19 @@ For example if $P=6$ and $K=5$, a possible input is:
 1 2 3 4 5
 ```
 
-The goal is to develop a heuristic compression algorithm that minimizes the number of rows based on certain rules.
+The goal is to develop a heuristic compression algorithm that compresses the matrix to minimize the number of rows. Merging of rows is performed according to certain rules.
 
 ### Merging Rules
 
-1. Merging is performed row-wise.
+1. Merging is performed row-wise only.
+2. Two rows can be merged if they differ by exactly one column (Hamming distance = 1).
+    ```
+    1,2,3,4
+    1,2,5,4
+    3,1,3,4
+    ```
+    Row 1 and 2 are mergeable but Row 1 and Row 3 are not.
+
 3. You may merge multiple rows at once.
     
    **Example 1:**
@@ -48,7 +56,7 @@ The goal is to develop a heuristic compression algorithm that minimizes the numb
     1 1 2 2        1 1 2 2
     ```
 
-4. You may merge non-consecutive rows.
+4. You may merge non-adjacent rows.
    
     ```
     1 3 5 5
@@ -65,17 +73,17 @@ The goal is to develop a heuristic compression algorithm that minimizes the numb
     ```
 
 5. The merging operation should be reversible: We should be able to obtain the original input from the compressed result, ignoring order of rows.
-6. Two rows can be merged if they differ by exactly one column.
-    
-    An invalid merge is to convert 
+
+    An invalid merge is: 
     
     ```
     1 1 1 2
     1 3 2 2   -->  1 1|3 1|2 2  [WRONG]
     ```
 
-   because if we had to unmerge/uncompress `1 1|3 1|2 2`, invalid rows such as `1 1 3 2` will be created.
+   because if we had to unmerge/uncompress `1 1|3 1|2 2`, extra rows `1 1 3 2` and `1 3 1 2` will be created. These extra rows were not part of the original input.
 
+---
 
 One way to compress the original input is as follows:
 
@@ -135,6 +143,8 @@ Examples of invalid input file:
 
 - You must save your output to a separate CSV file.
 - The order of rows in your output does not matter.
+- There should not be any duplicates in your output.
+- Your output should be reversible, i.e. uncompressing it should give the input back, ignoring order of rows.
 - The order of values in a merged cell does not matter. `3|4|5` is same as `4|3|5` and other permutations.
 
 
@@ -147,16 +157,13 @@ Write a function that performs clustering of rows given the following parameters
 
 ## Task 2
 
-Extend the function in Task 1 to add a new parameter:
+Extend the function in Task 1 to **add** a new parameter:
 
 - The index of the column where clustering will start.
 
-Create a **new** function that takes as parameter:
+Create a **new** function that takes a **single** parameter and performs row clustering:
 
-- The tolerance level (1, 2, or 3) for merging rows. A tolerance of 1 means that rows must differ by exactly 1 column to be mergeable. A tolerance of 2 means that rows must differ by 1 or 2 columns can be merged. 
-
-> [!NOTE]
-> When the tolerance is not equal to 1, you do **not** have to specify a value for the other parameters.
+- The tolerance level (1, 2, or 3) for merging rows. A tolerance of 1 means that only rows with hamming distance = 1 are mergeable. A tolerance of 2 means that rows with hamming distance = 1 or 2 are mergeable. A tolerance of 3 means that rows with hamming distance = 1, 2, or 3 are mergeable.
 
 For example, when tolerance = 2:
 
