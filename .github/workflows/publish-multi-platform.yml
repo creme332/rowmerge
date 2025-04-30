@@ -52,11 +52,31 @@ jobs:
         # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-      - name: Release
+      - name: Upload built binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: ${{ steps.strings.outputs.build-output-dir }}/${{ matrix.build_type }}/${{ matrix.artifact_name }}
+
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Show downloaded artifacts
+        run: ls -R artifacts
+
+      - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/Release/${{ matrix.artifact_name }}
-            docs/*.md
-            LICENSE
-            data/*.txt
+            artifacts/*/*
+          draft: false
+          prerelease: false
