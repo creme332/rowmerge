@@ -104,7 +104,8 @@ TEST_CASE("Testing unmergeRows()") {
   }
 
   SUBCASE("2 rows") {
-    vector<vector<string>> resultAsVector = Validator::unmergeRows("1|2,3|4,5\n5,5,5");
+    vector<vector<string>> resultAsVector =
+        Validator::unmergeRows("1|2,3|4,5\n5,5,5");
     string result = AlgorithmBase::vectorToCSV(resultAsVector);
     string expected = "1,3,5\n2,3,5\n1,4,5\n2,4,5\n5,5,5\n";
     CHECK(expected == result);
@@ -131,6 +132,17 @@ TEST_CASE("Testing validateOutput()") {
     std::pair<bool, std::string> result =
         Validator::validateOutput(input, output);
     CHECK(result.first);
+  }
+
+  SUBCASE("Output is missing rows from input") {
+    string input = "1,2,3,4\n"
+                   "1,3,3,4\n"
+                   "5,5,5,5";
+
+    string output = "1,2|3,3,4\n";
+    std::pair<bool, std::string> result =
+        Validator::validateOutput(input, output);
+    CHECK_FALSE(result.first);
   }
 
   SUBCASE("Valid input and invalid output") {
