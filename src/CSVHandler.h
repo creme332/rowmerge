@@ -88,6 +88,10 @@ public:
    * approach ensures that the generated file contains rows that can actually be
    * compressed.
    *
+   * @attention The maximum number of rows that you can obtain is given by
+   * `rows * load ^ cols` which means that you should try to keep the `load` and
+   * `cols` small to avoid exponential blowoff.
+   *
    * @param rows The minimum number of rows in the final output.
    * @param cols The number of columns in each row.
    * @param maxLoad Maximum number of values in a merged cell. The minimum value
