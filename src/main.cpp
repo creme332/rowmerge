@@ -8,7 +8,6 @@
 #include <iostream>
 #include <limits>
 #include <vector>
-
 namespace fs = std::filesystem;
 
 /**
@@ -299,7 +298,7 @@ void mainProgram() {
  * input other than the input file.
  *
  */
-void runAlgorithm() {
+void runAlgorithm(AlgorithmBase &algo) {
   std::string start_directory = "data/";
 
   // initialize start directory. If no data directory found, look one level up
@@ -328,8 +327,6 @@ void runAlgorithm() {
       CSVHandler::readCSVAsVector(input_filepath);
 
   // Perform clustering
-  TrivialAlgorithm algo;
-
   Timer timer;
   std::cout << std::endl << "Processing..." << std::endl;
 
