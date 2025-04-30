@@ -287,7 +287,7 @@ void mainProgram() {
   if (modeNumber == 1 || (tolerance == 1 && modeNumber == 0)) {
     std::cout << "Validating output..." << std::endl;
     std::string csvContentAsString = CSVHandler::readFile(input_filepath);
-    auto validation = Validator::validate_output(csvContentAsString, output);
+    auto validation = Validator::validateOutput(csvContentAsString, output);
     std::cout << "Result: " << validation.second << std::endl;
   }
 
@@ -367,7 +367,7 @@ void runAlgorithm() {
   // Validate output
   std::cout << "Validating output..." << std::endl;
   std::string csvContentAsString = CSVHandler::readFile(input_filepath);
-  auto validation = Validator::validate_output(csvContentAsString, output);
+  auto validation = Validator::validateOutput(csvContentAsString, output);
   std::cout << "Result: " << validation.second << std::endl;
 }
 
@@ -407,7 +407,7 @@ void benchmarkAlgorithm(AlgorithmBase &algo) {
 
     // Validate output
     std::string csvContentAsString = CSVHandler::readFile(input_filepath);
-    auto validation = Validator::validate_output(csvContentAsString, output);
+    auto validation = Validator::validateOutput(csvContentAsString, output);
     std::cout << "Result: " << validation.second << std::endl;
 
     const int finalRowCount = countRows(output);

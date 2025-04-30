@@ -36,7 +36,7 @@ int main() {
     std::cout << "+ Input valid" << std::endl;
 
     // validate output against input
-    auto output_validation = Validator::validate_output(input, output);
+    auto output_validation = Validator::validateOutput(input, output);
     if (output_validation.first) {
       std::cout << "+ Output valid" << std::endl;
     } else {
