@@ -1,5 +1,4 @@
 #include "CSVHandler.h"
-#include "algorithms/new_algo.h"
 #include "algorithms/optimized_algo.h"
 #include "algorithms/trivial_algo.h"
 #include "timer.h"
@@ -175,13 +174,18 @@ void mainProgram() {
             << "      * User-defined parameters\n"
             << "  1 - Normal clustering\n"
             << "      * Automatically determined parameters\n"
+            << "      * Optimizes compression ratio over execution time\n"
             << "  2 - Normal clustering with row repetition\n"
             << "      * Automatically determined parameters\n"
-            << "      * Row repetition allowed\n\n";
+            << "      * Row repetition allowed\n"
+            << "  3 - Fast clustering\n"
+            << "      * Automatically determined parameters\n"
+            << "      * Optimizes execution time over compression ratio\n"
+            << std::endl;
 
   do {
-    modeNumber = requestInteger("Choose method (0, 1, or 2): ");
-  } while (modeNumber < 0 || modeNumber > 2);
+    modeNumber = requestInteger("Choose method (0, 1, 2, or 3): ");
+  } while (modeNumber < 0 || modeNumber > 3);
 
   // if selective clustering has been selected, request more info from user
   if (modeNumber == 0) {
@@ -219,7 +223,6 @@ void mainProgram() {
   }
 
   // Perform clustering and start a timer
-  TrivialAlgorithm algo;
   std::string output;
   std::cout << std::endl
             << "Processing " << input_filename << "..." << std::endl;
@@ -227,6 +230,7 @@ void mainProgram() {
   Timer timer;
   timer.start();
   try {
+    TrivialAlgorithm algo;
     if (modeNumber == 0) {
       // selective clustering mode
       if (tolerance == 1) {
@@ -239,9 +243,13 @@ void mainProgram() {
     } else if (modeNumber == 1) {
       // normal clustering
       output = algo.solve(csvContentAsVector);
-    } else {
+    } else if (modeNumber == 2) {
       // normal clustering with row repetition
       output = algo.clusterWithRowDuplication(csvContentAsVector);
+    } else {
+      // fast clustering
+      OptimizedAlgorithm fastAlgo;
+      output = fastAlgo.solve(csvContentAsVector);
     }
   } catch (std::exception e) {
     std::cerr << e.what() << std::endl;
@@ -281,9 +289,10 @@ void mainProgram() {
     std::cout << "Output written to " << output_filename << std::endl;
   }
 
-  // Validate output if tolerance is default = 1 or normal clustering mode is
-  // used
-  if (modeNumber == 1 || (tolerance == 1 && modeNumber == 0)) {
+  // Validate output if tolerance is default = 1 or normal clustering mode or
+  // fast clustering is used
+  if (modeNumber == 1 || modeNumber == 3 ||
+      (tolerance == 1 && modeNumber == 0)) {
     std::cout << "Validating output..." << std::endl;
     std::string csvContentAsString = CSVHandler::readFile(input_filepath);
     auto validation = Validator::validateOutput(csvContentAsString, output);
