@@ -42,7 +42,7 @@ ctest --output-on-failure
 Compile the project:
 
 ```bash
-g++ -std=c++17 src/main.cpp src/algorithms/*.cpp src/CSVHandler.cpp src/timer.cpp src/validator.cpp -o rowmerge.exe
+g++ -std=c++17 -pthread src/main.cpp src/algorithms/*.cpp src/CSVHandler.cpp src/timer.cpp src/validator.cpp -o rowmerge.exe 
 ```
 
 Run the project:
