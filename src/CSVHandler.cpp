@@ -170,19 +170,21 @@ std::string CSVHandler::generate(const int minRows, const int cols,
     std::string line;
 
     for (int j = 0; j < cols; ++j) {
-      // generate a random load
+      // generate a random load. The load indicates the number of values in the
+      // current column
       int load = loadDistribution(gen);
 
-      // generate a random column value
-      int num = columnDistribution(gen);
-      line += std::to_string(num);
-      load--;
-
-      // if load != 1, add more values to column
-      while (load > 0) {
-        line += "|" + std::to_string(num);
-        load--;
+      // generate the values to be placed in current column
+      std::vector<int> randomValues;
+      while (load--) {
+        randomValues.push_back(columnDistribution(gen));
       }
+
+      // sort the vector. This is important to later ensure uniqueness of line.
+      sort(randomValues.begin(), randomValues.end());
+
+      // convert vector to pipe-separated list and add column to line
+      line += joinArrayWithPipe(randomValues);
 
       // add column separator
       if (j < cols - 1)
@@ -198,11 +200,22 @@ std::string CSVHandler::generate(const int minRows, const int cols,
     }
   }
 
-  std::string compressedResult =
-      ss.str(); // Return the generated CSV as a string
-
+  // unmerge compressed rows
   std::vector<std::vector<std::string>> uncompressedOutput =
-      Validator::unmergeRows(compressedResult);
+      Validator::unmergeRows(ss.str());
+
+  // shuffle arrays for randomness
+  std::shuffle(uncompressedOutput.begin(), uncompressedOutput.end(), gen);
 
   return AlgorithmBase::vectorToCSV(uncompressedOutput);
+}
+
+std::string CSVHandler::joinArrayWithPipe(const std::vector<int> &arr) {
+  std::ostringstream oss;
+  for (size_t i = 0; i < arr.size(); ++i) {
+    if (i > 0)
+      oss << "|";
+    oss << arr[i];
+  }
+  return oss.str();
 }

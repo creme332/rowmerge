@@ -3,6 +3,7 @@
 
 #include "algorithms/algorithm_base.h"
 #include "validator.h"
+#include <algorithm>
 #include <cstdlib>
 #include <ctime>
 #include <filesystem>
@@ -94,6 +95,8 @@ public:
    */
   static std::string generate(const int minRows, const int cols,
                               const int maxLoad);
+
+  static std::string joinArrayWithPipe(const std::vector<int> &arr);
 };
 
 #endif // CSV_HANDLER_H
