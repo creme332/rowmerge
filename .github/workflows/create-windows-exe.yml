@@ -23,15 +23,19 @@ jobs:
         cmake ..
         cmake --build . --config Release
 
-    - name: Upload rowmerge executable
+    - name: Get current date (Windows)
+      shell: pwsh
+      run: echo "date=$((Get-Date).ToString('yyyy-MM-dd'))" >> $env:GITHUB_ENV
+
+    - name: Move executable to root directory
+      run: mv build/Release/rowmerge.exe rowmerge.exe
+
+    - name: Upload rowmerge executable and data
       uses: actions/upload-artifact@v4
       with:
-        name: rowmerge.exe
-        path: build/Release/rowmerge.exe
-    
-    - name: Upload validator executable
-      uses: actions/upload-artifact@v4
-      with:
-        name: validator.exe
-        path: build/Release/validator.exe
+        name: rowmerge-${{ env.date }}
+        path: |
+          rowmerge.exe
+          data/
+  
 

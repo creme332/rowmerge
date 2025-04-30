@@ -2,11 +2,11 @@
 
 ## Prerequisites
 
-- CMake
-- Git
-- C++ compiler
+- CMake (optional but recommended)
+- Git (only needed for downloading the repository)
+- C++17 compiler
 
-## Instructions
+## Instructions with CMake
 
 Download the repository:
 
@@ -35,4 +35,18 @@ To run tests:
 ```bash
 cd /path/to/build
 ctest --output-on-failure
+```
+
+## Instructions without CMake
+
+Compile the project:
+
+```bash
+g++ -std=c++17 src/main.cpp src/algorithms/*.cpp src/CSVHandler.cpp src/timer.cpp src/validator.cpp -o rowmerge.exe
+```
+
+Run the project:
+
+```bash
+./rowmerge.exe
 ```

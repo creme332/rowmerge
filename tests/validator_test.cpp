@@ -1,3 +1,4 @@
+#include "../src/algorithms/algorithm_base.h"
 #include "../src/validator.h"
 #include "doctest.h"
 #include <deque>
@@ -52,54 +53,72 @@ bool check_deque(const std::deque<std::string> &expected,
   return true;
 }
 
-TEST_CASE("Testing unmerge()") {
+TEST_CASE("Testing unmergeRow()") {
   using namespace std;
 
   SUBCASE("Basic Comma-Separated Values") {
-    deque<string> result = Validator::unmerge("a,b,c");
+    deque<string> result = Validator::unmergeRow("a,b,c");
     deque<string> expected = {"a,b,c"};
     CHECK(check_deque(result, expected));
   }
 
   SUBCASE("Empty string") {
-    deque<string> result = Validator::unmerge("");
+    deque<string> result = Validator::unmergeRow("");
     CHECK(result.size() == 0);
   }
 
   SUBCASE("Single column") {
-    deque<string> result = Validator::unmerge("hello");
+    deque<string> result = Validator::unmergeRow("hello");
     deque<string> expected = {"hello"};
     CHECK(check_deque(result, expected));
   }
 
   SUBCASE("Single column with pipe") {
-    deque<string> result = Validator::unmerge("1|2|3");
+    deque<string> result = Validator::unmergeRow("1|2|3");
     deque<string> expected = {"1", "2", "3"};
 
     CHECK(check_deque(result, expected));
   }
 
   SUBCASE("Normal case with a single pipe") {
-    deque<string> result = Validator::unmerge("2,1|2|3,2,2,2");
+    deque<string> result = Validator::unmergeRow("2,1|2|3,2,2,2");
     deque<string> expected = {"2,2,2,2,2", "2,1,2,2,2", "2,3,2,2,2"};
     CHECK(check_deque(expected, result));
   }
 
   SUBCASE("Normal case with 2 pipes") {
-    deque<string> result = Validator::unmerge("1|2,3|4,5");
+    deque<string> result = Validator::unmergeRow("1|2,3|4,5");
     deque<string> expected = {"1,3,5", "1,4,5", "2,3,5", "2,4,5"};
     CHECK(check_deque(expected, result));
   }
 }
 
-TEST_CASE("Testing validate_output()") {
+TEST_CASE("Testing unmergeRows()") {
+  using namespace std;
+
+  SUBCASE("A single row with pipes") {
+    vector<vector<string>> resultAsVector = Validator::unmergeRows("1|2,3|4,5");
+    string result = AlgorithmBase::vectorToCSV(resultAsVector);
+    string expected = "1,3,5\n2,3,5\n1,4,5\n2,4,5\n";
+    CHECK(expected == result);
+  }
+
+  SUBCASE("2 rows") {
+    vector<vector<string>> resultAsVector = Validator::unmergeRows("1|2,3|4,5\n5,5,5");
+    string result = AlgorithmBase::vectorToCSV(resultAsVector);
+    string expected = "1,3,5\n2,3,5\n1,4,5\n2,4,5\n5,5,5\n";
+    CHECK(expected == result);
+  }
+}
+
+TEST_CASE("Testing validateOutput()") {
   using namespace std;
 
   SUBCASE("Empty input and output") {
     string input = "";
     string output = "";
     std::pair<bool, std::string> result =
-        Validator::validate_output(input, output);
+        Validator::validateOutput(input, output);
     CHECK(result.first);
   }
 
@@ -110,7 +129,7 @@ TEST_CASE("Testing validate_output()") {
     string output = "1,1,1|3,2\n"
                     "1,1,2,2";
     std::pair<bool, std::string> result =
-        Validator::validate_output(input, output);
+        Validator::validateOutput(input, output);
     CHECK(result.first);
   }
 
@@ -119,7 +138,7 @@ TEST_CASE("Testing validate_output()") {
                    "1,3,2,2\n";
     string output = "1,1|3,1|2,2\n";
     std::pair<bool, std::string> result =
-        Validator::validate_output(input, output);
+        Validator::validateOutput(input, output);
     CHECK_FALSE(result.first);
     CHECK_EQ(result.second, "Output contains a row not found in input: "
                             "1,3,1,2\nOriginal row from output: 1,1|3,1|2,2");

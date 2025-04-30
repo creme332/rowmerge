@@ -12,6 +12,8 @@
 /**
  * @class Validator
  * @brief Contains functions for validating the output of a heuristic algorithm.
+ * It only validates the output of Task 1 where the original merging rules are
+ * applied. It does not work for the other tasks.
  *
  */
 class Validator {
@@ -25,18 +27,29 @@ public:
    * @param output Final CSV file after compression
    * @return std::pair<bool, std::string>
    */
-  static std::pair<bool, std::string>
-  validate_output(const std::string &input, const std::string &output);
+  static std::pair<bool, std::string> validateOutput(const std::string &input,
+                                                     const std::string &output);
+
+  /**
+   * @brief Unmerges a list of rows (e.g. after compression algorithm was
+   * applied) to give back original rows.
+   *
+   * @param rows List of rows in CSV format
+   * @return std::vector<std::vector<std::string>> A 2D vector of rows that can
+   * be merged to give `rows`.
+   */
+  static std::vector<std::vector<std::string>> unmergeRows(std::string rows);
 
   /**
    * @brief Unmerges a row and returns the initial list of rows.
-   * For example `unmerge('1|2|3,2')` returns `['12', '22', '32']`
+   * For example `unmerge('1|2|3,2')` returns `['12', '22', '32']`. This
+   * function is a wrapper for `unmerge(vector<string>, int, deque<string>)
    *
    * @param row A comma-separated row of values with possibly merged values
    * @return std::deque<std::string> List of rows that can be merged back to
    * `row`.
    */
-  static std::deque<std::string> unmerge(std::string row);
+  static std::deque<std::string> unmergeRow(std::string row);
 
 private:
   /**
@@ -47,8 +60,8 @@ private:
    * @param i Index of last element in columns
    * @param acc Accumulator for storing unmerged version of rows
    */
-  static void unmerge(std::vector<std::string> columns, int i,
-                      std::deque<std::string> &acc);
+  static void unmergeRow(std::vector<std::string> columns, int i,
+                         std::deque<std::string> &acc);
 
   /**
    * @brief Splits a given string into a vector of substrings based on a

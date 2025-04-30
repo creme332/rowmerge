@@ -53,6 +53,10 @@ CSVHandler::stringToVector(const std::string &str) {
   std::string line;
 
   while (std::getline(stream, line)) { // Read each line
+    // ignore empty lines
+    if (line.empty())
+      continue;
+
     std::vector<std::string> row;
     std::istringstream lineStream(line);
     std::string cell;

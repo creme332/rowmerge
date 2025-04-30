@@ -1,8 +1,7 @@
 #include "validator.h"
 
 std::pair<bool, std::string>
-Validator::validate_output(const std::string &input,
-                           const std::string &output) {
+Validator::validateOutput(const std::string &input, const std::string &output) {
   if (input.empty() && output.empty()) {
     return {true, "Validation successful."};
   }
@@ -32,7 +31,7 @@ Validator::validate_output(const std::string &input,
 
   for (std::string row : out_rows) {
     // unmerge each row in output
-    std::deque<std::string> unmerged_rows = unmerge(row);
+    std::deque<std::string> unmerged_rows = unmergeRow(row);
     for (std::string urow : unmerged_rows) {
 
       // Finding element with key
@@ -69,20 +68,41 @@ Validator::validate_output(const std::string &input,
   return {true, "Validation successful."};
 }
 
-std::deque<std::string> Validator::unmerge(std::string row) {
+std::vector<std::vector<std::string>> Validator::unmergeRows(std::string rows) {
+  // create a vector of input rows
+  std::vector in_rows = split(rows, '\n');
+
+  std::vector<std::vector<std::string>> uncompressedRows;
+
+  for (std::string row : in_rows) {
+    // unmerge row
+    std::deque<std::string> unmerged_rows = unmergeRow(row);
+
+    // merge into uncompressedRows
+    for (std::string unmerged_row : unmerged_rows) {
+      std::vector<std::string> cols = split(unmerged_row, ',');
+      uncompressedRows.push_back(cols);
+    }
+  }
+
+  return uncompressedRows;
+}
+
+std::deque<std::string> Validator::unmergeRow(std::string row) {
   // put each column in an array
   std::vector columns = split(row, ',');
 
-  // create an accumulator to store result
+  // create an accumulator to store uncompressed rows
   std::deque<std::string> acc;
 
-  unmerge(columns, columns.size() - 1, acc);
+  // start uncompressing columns from right to left
+  unmergeRow(columns, columns.size() - 1, acc);
 
   return acc;
 }
 
-void Validator::unmerge(std::vector<std::string> columns, int i,
-                        std::deque<std::string> &acc) {
+void Validator::unmergeRow(std::vector<std::string> columns, int i,
+                           std::deque<std::string> &acc) {
   if (i < 0 || columns.size() == 0)
     return;
 
@@ -93,12 +113,12 @@ void Validator::unmerge(std::vector<std::string> columns, int i,
     if (acc.size() == 0) {
       acc.push_back(columns[i]);
     } else {
-      // prepend columns[i] to each element in accumulator
+      // prepend columns[i] to each row in accumulator
       for (int j = 0; j < acc.size(); j++) {
         acc[j] = columns[i] + "," + acc[j];
       }
     }
-    unmerge(columns, i - 1, acc);
+    unmergeRow(columns, i - 1, acc);
     return;
   }
 
@@ -116,7 +136,7 @@ void Validator::unmerge(std::vector<std::string> columns, int i,
       acc.push_back(g);
     }
     // unmerge remaining columns
-    unmerge(columns, i - 1, acc);
+    unmergeRow(columns, i - 1, acc);
     return;
   }
 
@@ -135,7 +155,7 @@ void Validator::unmerge(std::vector<std::string> columns, int i,
     }
   }
 
-  unmerge(columns, i - 1, acc);
+  unmergeRow(columns, i - 1, acc);
 }
 
 std::vector<std::string> Validator::split(const std::string &s, char delim) {
