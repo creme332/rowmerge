@@ -17,8 +17,8 @@ Download links:
 
 
 [![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-](https://github.com/creme332/rowmerge/releases/latest/download/rowmerge-windows-amd-64) [![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://github.com/creme332/rowmerge/releases/latest/download/rowmerge-linux-amd-64
-)[![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0)](https://github.com/creme332/rowmerge/releases/latest/download/rowmerge-macos-amd-64
+](https://github.com/creme332/rowmerge/releases/latest/download/rowmerge-windows-amd-64.zip) [![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://github.com/creme332/rowmerge/releases/latest/download/rowmerge-linux-amd-64.zip
+)[![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0)](https://github.com/creme332/rowmerge/releases/latest/download/rowmerge-macos-amd-64.zip
 )
 
 ## Features
