@@ -85,10 +85,9 @@ jobs:
 
       - name: Compress artifact folders
         run: |
-          cd artifacts
-          zip -r rowmerge-linux-amd64.zip rowmerge-linux-amd-64
-          zip -r rowmerge-macos-amd64.zip rowmerge-macos-amd-64
-          zip -r rowmerge-windows-amd64.zip rowmerge-windows-amd-64
+          zip -r artifacts/rowmerge-linux-amd-64.zip artifacts/rowmerge-linux-amd-64
+          zip -r artifacts/rowmerge-macos-amd-64.zip artifacts/rowmerge-macos-amd-64
+          zip -r artifacts/rowmerge-windows-amd-64.zip artifacts/rowmerge-windows-amd-64
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
