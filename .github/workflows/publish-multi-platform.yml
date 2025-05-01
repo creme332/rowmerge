@@ -94,8 +94,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-              artifacts/rowmerge-linux-amd-64.zip
-              artifacts/rowmerge-macos-amd-64.zip
-              artifacts/rowmerge-windows-amd-64.zip
+              rowmerge-linux-amd-64.zip
+              rowmerge-macos-amd-64.zip
+              rowmerge-windows-amd-64.zip
           draft: false
           prerelease: false
