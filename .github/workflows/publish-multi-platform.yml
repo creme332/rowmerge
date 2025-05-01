@@ -20,19 +20,19 @@ jobs:
             cpp_compiler: cl
             artifact_name: rowmerge.exe
             artifact_path: build/Release/rowmerge.exe
-            asset_name: rowmerge-windows
+            asset_name: rowmerge-windows-amd-64
 
           - os: ubuntu-latest
             cpp_compiler: g++
             artifact_name: rowmerge
             artifact_path: build/rowmerge
-            asset_name: rowmerge-linux
+            asset_name: rowmerge-linux-amd-64
 
           - os: macos-latest
             cpp_compiler: clang++
             artifact_name: rowmerge
             artifact_path: build/rowmerge
-            asset_name: rowmerge-macos
+            asset_name: rowmerge-macos-amd-64
 
     steps:
       - uses: actions/checkout@v4
@@ -57,12 +57,15 @@ jobs:
         # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
+      - name: Move executable to root directory
+        run: mv ${{ matrix.artifact_path }} ${{ matrix.artifact_name }}
+
       - name: Upload executable and data folder
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.asset_name }}
           path: |
-            ${{ matrix.artifact_path }}
+            ${{ matrix.artifact_name }}
             data/
 
   release:
