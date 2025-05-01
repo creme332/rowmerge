@@ -1,6 +1,7 @@
 # rowmerge
 
-![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white) ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+A heuristic algorithm for merging rows efficiently. Please view the [problem statement](docs/PROBLEM_STATEMENT.md) for more details.
+
 
 ```
 1 2 4 4 2
@@ -11,19 +12,27 @@
 1 2 3 4 5
 ```
 
-Please view the [documentation](docs/PROBLEM_STATEMENT.md) for more details about the problem.
+
+Download links:
+
+
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+](https://github.com/creme332/rowmerge/releases/latest/download/rowmerge-windows-amd-64) [![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://github.com/creme332/rowmerge/releases/latest/download/rowmerge-linux-amd-64
+)[![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0)](https://github.com/creme332/rowmerge/releases/latest/download/rowmerge-macos-amd-64
+)
 
 ## Features
 
-- Automated unit testing to ensure code reliability.
 - Four different algorithms, including a multithreading solution for row merging.
-- Comprehensive input validation at all steps, with clear error messages for invalid data.
-- Automatic executable generation with Github Actions.
 - Generator function to create test inputs for easy validation and benchmarking.
+- Validator program for CSV file and output file.
+- Automated unit testing to ensure code reliability.
+- Comprehensive input validation at all steps, with clear error messages for invalid data.
+- Automatic executable generation for different platforms with Github Actions.
 
 ## Installation
 
-See the [installation guide](docs/INSTALLATION_GUIDE.md).
+To download the source code and compile the program locally, see the [installation guide](docs/INSTALLATION_GUIDE.md). If you only want to run the program, use the download buttons above.
 
 ## Results
 
